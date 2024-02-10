@@ -10,15 +10,7 @@ import { loginAction, logoutAction } from "../redux/actions";
 
 
 const StyledHeader = styled.div`
-    .login-register{
-        a{
-            margin-right: 0.5em;
-        }
-    }
-    h1{
-      text-align: center;
-      font-size: xx-large;
-    }
+    
 
 `;
 

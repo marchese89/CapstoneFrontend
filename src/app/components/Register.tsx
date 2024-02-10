@@ -1,11 +1,14 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { loginAction } from "../redux/actions";
 
 
 const StyledRegister = styled.div`
-    margin-top: 4em;
+    margin-top: 8em;
 `;
 
 type UserRegisterDTO = {
@@ -28,6 +31,9 @@ type ResponseDTO ={
 }
 
 export default function Register(): JSX.Element{
+
+  const router = useRouter();
+  const dispatch = useDispatch();
     
     const [user,setUser] = useState<UserRegisterDTO>(
         {
@@ -53,12 +59,30 @@ export default function Register(): JSX.Element{
         }
         )
     }
+    type TokenDTO = {
+      token:string
+      role:string
+  }
 
-
-    function handleSubmit(event: FormEvent<HTMLFormElement>){
-        event.preventDefault();
-        console.log(user);
-        setUser({
+    function login(){
+    
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(
+            {
+              email: user.email,
+              password: user.password
+            }
+            ),
+        })
+        .then((response: Response) => {
+          if (!(response.status === 200)) {
+            throw new Error("Network response was not ok");
+          }
+          setUser({
             name:'',
             surname:'',
             email:'',
@@ -72,6 +96,31 @@ export default function Register(): JSX.Element{
             postalCode:'',
             piva:''
         })
+          return response.json();
+        })
+        .then((loginResponse:TokenDTO)=>{
+          localStorage.setItem("authToken",loginResponse.token);
+          if(loginResponse.role === "STUDENT"){
+              localStorage.setItem("userType","STUDENT");
+              dispatch(loginAction("STUDENT"));
+              router.push("/student_area");
+          }else if(loginResponse.role === "TEACHER"){
+            localStorage.setItem("userType","TEACHER");
+            dispatch(loginAction("TEACHER"));
+              router.push("/teacher_area");
+          }
+          
+        })
+        .catch((error:Error)=>{
+          console.log(error);
+        })
+  }
+
+
+    function handleSubmit(event: FormEvent<HTMLFormElement>){
+        event.preventDefault();
+        // console.log(user);
+        
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`, {
             method: "POST",
             headers: {
@@ -83,10 +132,7 @@ export default function Register(): JSX.Element{
             if (!(response.status === 201)) {
               throw new Error("Network response was not ok");
             }
-            return response.json();
-          })
-          .then((data:ResponseDTO)=>{
-            console.log(data);
+            login();
           })
           .catch((error:Error)=>{
             console.log(error);
@@ -145,7 +191,7 @@ export default function Register(): JSX.Element{
     //         </div>
     //     </StyledRegister>
     <StyledRegister>
-        <form>
+        <form onSubmit={handleSubmit}>
         <div className="border-b border-gray-900/10 pb-12 tailwind-form mx-auto max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
         <h2 className="text-center font-semibold leading-7 text-gray-900">Registrazione</h2>
 
@@ -324,7 +370,7 @@ export default function Register(): JSX.Element{
                 type="text"
                 name="piva"
                 autoComplete="postal-code"
-                value={user.piva} onChange={handleInputChangeUser} minLength={11} maxLength={11} required
+                value={user.piva} onChange={handleInputChangeUser} minLength={11} maxLength={11}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>

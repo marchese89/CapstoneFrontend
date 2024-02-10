@@ -24,13 +24,20 @@ export default function TeacherArea(): JSX.Element{
         <h2 className="text-center font-semibold leading-7 text-gray-900">Area insegnante</h2>
         <div className="flex justify-center items-center">
               <button
+                className={`${pathname === '/teacher_area/profile' ? 'selected ':''}mt-4 mr-4 flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                onClick={()=>{router.push("")}}
+              >
+                Profilo
+              </button>
+              <button
                 className={`${pathname === '/teacher_area/subjects' ? 'selected ':''}mt-4 mr-4 flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                 onClick={()=>{router.push("/teacher_area/subjects")}}
               >
                 Materie
               </button>
               <button
-                className="mt-4 mr-4 flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className={`${pathname === '/teacher_area/requests' ? 'selected ':''}mt-4 mr-4 flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                onClick={()=>{router.push("/teacher_area/requests")}}
               >
                 Richieste
               </button>

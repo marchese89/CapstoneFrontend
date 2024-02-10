@@ -1,5 +1,4 @@
-import StudentArea from "../components/StudentArea";
 
-export default function LoginPage(): JSX.Element {
-    return <StudentArea/>;
+export default function StudentAreaPage(): JSX.Element {
+    return <></>;
 }

@@ -2,8 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap");
+.login-register {
+}
 
-/* * {
-  font-family: "Inconsolata", monospace;
-} */
+.login-register a {
+  margin-right: 0.5em;
+}
+h1 {
+  text-align: center;
+  font-size: xx-large;
+}
+.icon:hover {
+  cursor: pointer;
+}
