@@ -22,6 +22,12 @@ type RquestParam= {
       getSolution();
     },[])
 
+    useEffect(() => {
+      if (isOpen && inputRef.current) {
+          inputRef.current.focus();
+      }
+  }, [isOpen]);
+
     function getFile(pathname:string,setFile:(url:string)=>void){
       console.log("chiamo get file "+pathname);
 

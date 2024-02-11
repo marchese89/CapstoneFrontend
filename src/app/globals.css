@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.login-register {
-}
-
 .login-register a {
   margin-right: 0.5em;
 }

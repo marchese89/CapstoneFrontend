@@ -1,3 +1,5 @@
+"use client"
+
 import TeacherArea from "../components/TeacherArea"
 
 export default function DashboardLayout({

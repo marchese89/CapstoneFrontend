@@ -1,3 +1,5 @@
+"use client"
+
 import StudentArea from "../components/StudentArea"
 
 export default function DashboardLayout({
