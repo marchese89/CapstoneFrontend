@@ -1,11 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { Request, Solution } from "../types";
+import { FeedBackResponse, NumericalObject, Request, Solution } from "../types";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { addPaymentData } from "../redux/actions";
+import Image from "next/image";
 
 type StudentParam= {
     requestId: number
@@ -24,17 +25,33 @@ ul{
           
         }
       }
+      .stars a{
+	opacity:20%;
+	cursor: pointer;
+}
+.stars:hover a{
+	opacity:100%;
+}
+.stars a:hover{
+	opacity:100%;
+}
+.stars a:hover ~ a{
+	opacity:20%;
+}
+
 `;
 
  const SingleRequestStudent:React.FC<StudentParam> = ({requestId})=>{
 
     const [request,setRequest] = useState<Request>();
-    const [fileContent, setFileContent] = useState<string>();
+    const [fileRequest, setFileRequest] = useState<string>();
+    const [fileSolution,setFileSolution] = useState<string>();
     const [solutionList,setSolutionList] = useState<Solution[]>();
+    const [teacherFeedback,setTeacherFeedback] = useState<NumericalObject>({});
     const router = useRouter();
     const dispatch = useDispatch();
 
-    function getFile(pathname:string){
+    function getFile(pathname:string,setFile:(url:string)=>void){
 
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file`, {
             method: "POST",
@@ -52,7 +69,8 @@ ul{
         })
         .then((blob:Blob) => {
               const url = URL.createObjectURL(blob);
-              setFileContent(url);
+              // setFileContent(url);
+              setFile(url);
             
         })
         .catch(error => {
@@ -82,6 +100,8 @@ ul{
               return response.json();
             })
             .then((sol:Solution[])=>{
+              //for each solution we need to get teacher's feedback
+              sol.forEach((s:Solution)=>{getFeedback(s.teacher.id)})
                 setSolutionList(sol);
                 console.log(sol);
                 // getFile(sol.solutionUrl,setFileSolutionContent);
@@ -91,10 +111,37 @@ ul{
             })
     }
 
+    function getFeedback(idTeacher:number){
+      console.log("chiamo get feedback")
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/feedback/${idTeacher}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response: Response) => {
+        if (!(response.status === 200)) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((r:FeedBackResponse)=>{
+        console.log("setto feedback "+r.score+" per l'insegnante "+idTeacher)
+        console.log(teacherFeedback);
+        setTeacherFeedback({
+          ...teacherFeedback,
+          [idTeacher]: r.score
+        })
+          
+      })
+      .catch((error:Error)=>{
+        console.log(error);
+      })
+    }
+
     function getRequest(){
-      if(request){
-        return;
-      }
+            console.log("chiamo get request")
             fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/student/${requestId}`, {
               method: "GET",
               headers: {
@@ -110,7 +157,12 @@ ul{
             })
             .then((req:Request)=>{
                 setRequest(req);
-                getFile(req.questionUrl);
+                getFile(req.questionUrl,setFileRequest);
+                if(req.requestState === "OPEN"){
+                  getSolutionList();
+                }else{
+                  getFile(req.solutionUrl,setFileSolution)
+                }
                 console.log(req);
             })
             .catch((error:Error)=>{
@@ -118,18 +170,40 @@ ul{
             })
     }
 
+    function sendFeedBack(score:number){
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/feedback`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify({
+          requestId: requestId,
+          score:score
+        })
+      })
+      .then((response: Response) => {
+        if (!(response.status === 201)) {
+          throw new Error("Network response was not ok");
+        }
+        getRequest();
+      })
+      .catch((error:Error)=>{
+        console.log(error);
+      })
+    }
+
     useEffect(()=>{
         getRequest();
-        getSolutionList();
     },[])
 
     return (<StyledSingleRequestStudent>
     <h2 className="text-center mt-4">{request?.title}</h2>
         <div>
         <div className="flex justify-center items-center">
-            {fileContent && (
+            {fileRequest && (
                 <img className="mt-4"
-                    src={fileContent}
+                    src={fileRequest}
                     // title="File Viewer"
                     style={{width: "70%",borderRadius:"7px"}}
                     alt="question image"
@@ -138,14 +212,15 @@ ul{
         </div>
         </div>
         <div className="text-center flex flex-col items-center mb-4">
-        <h2 className="text-center mt-4">Soluzioni</h2>
+        <h2 className="text-center mt-4">{
+        (request && request.requestState === "OPEN") ? 'Soluzioni': 'Soluzione'}</h2>
         <ul className="list-disc">
-    {solutionList && (solutionList.map((solution:Solution,i:number) =>(
+    {solutionList && solutionList.length > 0 && (solutionList.map((solution:Solution,i:number) =>(
       <li key={i} className="flex justify-between">
-        <div>{solution.teacher.name}&nbsp;{solution.teacher.surname}</div>
+        <div>{solution.teacher.name}&nbsp;{solution.teacher.surname}{' feedback: '+teacherFeedback[solution.teacher.id]}</div>
         <div className="flex">Prezzo: {solution.price/100}&euro;&nbsp;&nbsp;paga&nbsp;&nbsp;
         <svg onClick={()=>{
-          dispatch(addPaymentData(solution.id,solution.price));
+          dispatch(addPaymentData(solution.id,requestId,solution.price));
           router.push("/payment");
         }
           } xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="icon w-6 h-6">
@@ -158,6 +233,28 @@ ul{
     ))
     )}
 </ul>
+{(request && request.solutionUrl) && (<>
+  <img className="mt-4"
+  src={fileSolution}
+  // title="File Viewer"
+  style={{width: "70%",borderRadius:"7px"}}
+  alt="question image"
+/>
+<h2 className="mt-4">Feedback</h2>
+<div className="stars" id="stars">
+            <a style={request.feedback && request.feedback.score > 0 ?{opacity: "100%"}:{}}
+                onClick={()=>{sendFeedBack(1)}}>⭐</a>
+            <a style={request.feedback && request.feedback.score > 1 ?{opacity: "100%"}:{}}
+                onClick={()=>{sendFeedBack(2)}}>⭐</a>
+            <a style={request.feedback && request.feedback.score > 2 ?{opacity: "100%"}:{}}
+            onClick={()=>{sendFeedBack(3)}}>⭐</a>
+            <a style={request.feedback && request.feedback.score > 3 ?{opacity: "100%"}:{}}
+                onClick={()=>{sendFeedBack(4)}}>⭐</a>
+            <a style={request.feedback && request.feedback.score > 4 ?{opacity: "100%"}:{}}
+                onClick={()=>{sendFeedBack(5)}}>⭐</a>
+        </div>
+</>
+)}
 </div>
     </StyledSingleRequestStudent>);
 }

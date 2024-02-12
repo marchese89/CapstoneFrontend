@@ -35,6 +35,9 @@ const StyledRequestsStudent = styled.div`
               cursor: pointer;
             }
       }
+      input[type='checkbox']:focus {
+          outline: none;
+      }
 `;
 
 
@@ -48,6 +51,15 @@ export default function RequestsStudent(): JSX.Element {
   const [subjectId,setSubjectId] = useState<number>(-1);
   const [selectedFile, setSelectedFile] = useState<File>();
   const router = useRouter()
+  const [openedRequests, setOpenedRequests] = useState(true);
+  const [closedRequests, setclosedRequests] = useState(true);
+
+  const handleCheckboxChangeOpen = () => {
+    setOpenedRequests(!openedRequests);
+  };
+  const handleCheckboxChangeClose = () => {
+    setclosedRequests(!closedRequests);
+  };
 
   const handleFileChange = (event:React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
@@ -178,20 +190,29 @@ export default function RequestsStudent(): JSX.Element {
     <svg xmlns="http://www.w3.org/2000/svg" onClick={openModal} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 </svg>
-
+<div className="flex items-center mb-4">
+    <input id="default-checkbox" type="checkbox" checked={openedRequests}
+            onChange={handleCheckboxChangeOpen} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"/>
+    <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">Aperte</label>
+    <input id="default-checkbox" type="checkbox" checked={closedRequests}
+            onChange={handleCheckboxChangeClose} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"/>
+    <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Chiuse</label>
+</div>
 </div>
 <div className="subjects">
   <ul className="list-disc">
     {requestsList.map((request:Request,i:number) =>(
-      <li key={i} className="flex justify-between">
+      (((request.requestState === 'OPEN' && openedRequests))||((request.requestState === 'CLOSED' && closedRequests))) &&
+      (<li key={i} className="flex justify-between">
         {request.title}
         <div className="flex">
+          {request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}&nbsp;
         <svg onClick={()=>{router.push(`/student_area/requests/${request.id}`)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 icon">
   <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
 </svg>
 
   </div>
-      </li>
+      </li>)
     ))
     }
 </ul>

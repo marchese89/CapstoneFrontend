@@ -51,6 +51,7 @@ export type Request = {
     requestState:string,
     invoice:Invoice
     student:Student
+    feedback: FeedBack
 }
 
 export type Solution = {
@@ -61,3 +62,17 @@ export type Solution = {
     state:string,
     price:number
 }
+
+export type FeedBack = {
+    id:number,
+    score:number
+}
+
+export type FeedBackResponse = {
+    score:number
+}
+
+export type NumericalObject = {
+    [key: string]: number;
+  };
+

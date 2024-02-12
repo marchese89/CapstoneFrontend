@@ -5,11 +5,12 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 // import stripePromise from '../utils/stripe';
 import { FormEvent } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { removePaymentData } from "../redux/actions";
 
 const StyledPaymentForm = styled.div`
   .card-element {
@@ -28,7 +29,9 @@ export default function CheckoutForm({ clientSecret }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const priceFromRedux = useSelector((state) => state.payment.price);
   const solutionIdFromRedux = useSelector((state) => state.payment.solutionId);
-
+  const requestIdFromRedux = useSelector((state) => state.payment.requestId);
+  const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
   const clientSecretFromRedux = useSelector(
     (state) => state.payment.clientSecret
   );
@@ -120,10 +123,20 @@ export default function CheckoutForm({ clientSecret }) {
         solutionId: solutionIdFromRedux,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) {
+          throw new Error("Problems with payment");
+        }
+        res.json();
+      })
       .then((data) => {
-        router.push("/");
-        console.log(data.message);
+        router.push(`/student_area/requests/${requestIdFromRedux}`);
+        // console.log(data.message);
+      })
+      .catch((error) => {
+        dispatch(removePaymentData());
+        setIsOpen(true);
+        // console.log(error);
       });
 
     // This point will only be reached if there is an immediate error when
@@ -145,23 +158,72 @@ export default function CheckoutForm({ clientSecret }) {
     layout: "tabs",
   };
 
+  function handleClose() {
+    setIsOpen(false);
+    router.push(`/student_area/requests/${requestIdFromRedux}`);
+  }
+
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
-      <PaymentElement id="payment-element" options={paymentElementOptions} />
-      <div className="flex justify-center">
-        <button
-          disabled={isLoading || !stripe || !elements}
-          id="submit"
-          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          <span id="button-text">
-            {isLoading ? <div className="spinner" id="spinner"></div> : ""}Paga
-            Adesso
-          </span>
-        </button>
-      </div>
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
-    </form>
+    <>
+      <form id="payment-form" onSubmit={handleSubmit}>
+        <PaymentElement id="payment-element" options={paymentElementOptions} />
+        <div className="flex justify-center">
+          <button
+            disabled={isLoading || !stripe || !elements}
+            id="submit"
+            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            <span id="button-text">
+              {isLoading ? <div className="spinner" id="spinner"></div> : ""}
+              Paga Adesso
+            </span>
+          </button>
+        </div>
+        {/* Show any error or success messages */}
+        {message && <div id="payment-message">{message}</div>}
+      </form>
+      {/* Modal */}
+      {isOpen && (
+        <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+          <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+            <div className="flex justify-end">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 icon"
+                onClick={handleClose}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+            {/* Titolo */}
+            <div className="mb-4 text-center">
+              <h2 className="text-lg font-semibold">
+                Problemi con il pagamento
+              </h2>
+            </div>
+            <div>
+              Ci sono stati problemi durante il pagamento, si prega di riprovare
+            </div>
+            <div className="text-center">
+              {/* Bottone di submit */}
+              <button
+                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={handleClose}
+              >
+                Chiudi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
