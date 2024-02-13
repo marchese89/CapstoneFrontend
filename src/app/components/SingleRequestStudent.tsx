@@ -225,7 +225,7 @@ ul{
   style={{width: "70%",borderRadius:"7px"}}
   alt="question image"
 />
-<h2 className="mt-4">Feedback</h2>
+<h2 className="mt-4">Feedback insegnante</h2>
 <div className="stars" id="stars">
             <a style={request.feedback && request.feedback.score > 0 ?{opacity: "100%"}:{}}
                 onClick={()=>{sendFeedBack(1)}}>⭐</a>

@@ -77,3 +77,41 @@ export type FeedBackResponse = {
 //     [key: string]: number;
 //   };
 
+export type User = {
+    name:string,
+    surname:string,
+    email:string,
+    password:string,
+    cf:string,
+    role:string,
+    street:string,
+    houseNumber:string,
+    city:string,
+    province:string,
+    postalCode:string,
+    piva:string
+}
+
+export type UserToModify = {
+    name:string,
+    surname:string,
+    email:string,
+    cf:string,
+    role:string,
+    street:string,
+    houseNumber:string,
+    city:string,
+    province:string,
+    postalCode:string,
+    piva:string
+}
+
+export type UserFromDB = {
+    name:string;
+    surname:string;
+    email:string;
+    cf:string;
+    role:string;
+    address:Address
+    piva:string
+}

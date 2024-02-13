@@ -1,34 +1,23 @@
 "use client"
 
-import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { loginAction } from "../redux/actions";
-import { User } from "../types";
+import { User, UserFromDB, UserToModify } from "../types";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
-
-const StyledRegister = styled.div`
-    margin-top: 8em;
+const StyledProfile = styled.div`
+        input {
+        text-indent: 3m !important;
+        outline: none;
+    }   
 `;
 
+export default function Profile():JSX.Element {
 
-
-// type ResponseDTO ={
-//     id:number
-// }
-
-export default function Register(): JSX.Element{
-
-  const router = useRouter();
-  const dispatch = useDispatch();
-    
-    const [user,setUser] = useState<User>(
+    const [user,setUser] = useState<UserToModify>(
         {
             name:'',
             surname:'',
             email:'',
-            password:'',
             cf:'',
             role:'',
             street:'',
@@ -39,7 +28,6 @@ export default function Register(): JSX.Element{
             piva:''
         }
     );
-    
     function handleInputChangeUser(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>){
         setUser({
             ...user,
@@ -47,72 +35,16 @@ export default function Register(): JSX.Element{
         }
         )
     }
-    type TokenDTO = {
-      token:string
-      role:string
-  }
-
-    function login(){
-    
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(
-            {
-              email: user.email,
-              password: user.password
-            }
-            ),
-        })
-        .then((response: Response) => {
-          if (!(response.status === 200)) {
-            throw new Error("Network response was not ok");
-          }
-          setUser({
-            name:'',
-            surname:'',
-            email:'',
-            password:'',
-            cf:'',
-            role:'',
-            street:'',
-            houseNumber:'',
-            city:'',
-            province:'',
-            postalCode:'',
-            piva:''
-        })
-          return response.json();
-        })
-        .then((loginResponse:TokenDTO)=>{
-          localStorage.setItem("authToken",loginResponse.token);
-          if(loginResponse.role === "STUDENT"){
-              localStorage.setItem("userType","STUDENT");
-              dispatch(loginAction("STUDENT"));
-              router.push("/student_area");
-          }else if(loginResponse.role === "TEACHER"){
-            localStorage.setItem("userType","TEACHER");
-            dispatch(loginAction("TEACHER"));
-              router.push("/teacher_area");
-          }
-          
-        })
-        .catch((error:Error)=>{
-          console.log(error);
-        })
-  }
-
 
     function handleSubmit(event: FormEvent<HTMLFormElement>){
         event.preventDefault();
         // console.log(user);
         
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`, {
-            method: "POST",
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
             body: JSON.stringify(user),
           })
@@ -120,20 +52,73 @@ export default function Register(): JSX.Element{
             if (!(response.status === 201)) {
               throw new Error("Network response was not ok");
             }
-            login();
+            getUserDetails()
           })
           .catch((error:Error)=>{
             console.log(error);
           })
     }
 
-    return(
+    function getUserDetails(){
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/me`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          })
+          .then((response: Response) => {
+            if (!(response.status === 200)) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data:UserFromDB)=>{
+            setUser({
+                name:data.name,
+                surname: data.surname,
+                email:data.email,
+                cf:data.cf,
+                role:data.role,
+                street:data.address.street,
+                houseNumber:data.address.houseNumber,
+                city:data.address.city,
+                province:data.address.province,
+                postalCode:data.address.postalCode,
+                piva: ''
+            })
+            if(data.role === 'TEACHER'){
+                setUser({
+                name:data.name,
+                surname: data.surname,
+                email:data.email,
+                cf:data.cf,
+                role:data.role,
+                street:data.address.street,
+                houseNumber:data.address.houseNumber,
+                city:data.address.city,
+                province:data.address.province,
+                postalCode:data.address.postalCode,
+                piva: data.piva
+                })
+            }
+            console.log(data);
+          })
+          .catch((error:Error)=>{
+            console.log(error);
+          })
+    }
 
-    <StyledRegister>
-        <form onSubmit={handleSubmit}>
+    useEffect(()=>{
+        getUserDetails();
+    },[])
+
+
+    return <StyledProfile>
+        <div>
+            <h2 className="text-center mt-4">Modifica dati profilo</h2>
+            <form onSubmit={handleSubmit}>
         <div className="border-b border-gray-900/10 pb-12 tailwind-form mx-auto max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
-        <h2 className="text-center font-semibold leading-7 text-gray-900">Registrazione</h2>
-
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-3">
             <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
@@ -145,7 +130,7 @@ export default function Register(): JSX.Element{
                 name="name"
                 id="name"
                 value={user.name} onChange={handleInputChangeUser} required
-                className="px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 px-1.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -175,21 +160,7 @@ export default function Register(): JSX.Element{
                 name="email"
                 type="email"
                 value={user.email} onChange={handleInputChangeUser} required
-                className="px-1.5  block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-          <div className="sm:col-span-3">
-            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-              Password
-            </label>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={user.password} onChange={handleInputChangeUser} required
-                className="px-1.5  block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -208,25 +179,6 @@ export default function Register(): JSX.Element{
             </div>
           </div>
           
-
-          <div className="sm:col-span-3">
-            <label htmlFor="role" className="block text-sm font-medium leading-6 text-gray-900">
-              Ruolo
-            </label>
-            <div className="mt-2">
-              <select
-                id="role"
-                name="role"
-                value={user.role} onChange={handleInputChangeUser} required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-              >
-                <option></option>
-                <option value={"STUDENT"}>Studente</option>
-                <option value={"TEACHER"}>Insegnante</option>
-              </select>
-            </div>
-          </div>
-
           <div className="col-span-3">
             <label htmlFor="street" className="block text-sm font-medium leading-6 text-gray-900">
               Via
@@ -300,7 +252,8 @@ export default function Register(): JSX.Element{
               />
             </div>
           </div>
-          <div className="sm:col-span-2">
+          {
+            user.role === 'TEACHER' && (<div className="sm:col-span-2">
             <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
               P.IVA
             </label>
@@ -313,7 +266,9 @@ export default function Register(): JSX.Element{
                 className="px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
-          </div>
+          </div>)
+          }
+          
           
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
@@ -321,12 +276,12 @@ export default function Register(): JSX.Element{
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Registrati
+          Modifica
         </button>
       </div>
       </div>
       
       </form>
-      </StyledRegister>
-    )
+        </div>
+        </StyledProfile>
 }
