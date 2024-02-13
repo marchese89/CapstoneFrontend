@@ -40,6 +40,7 @@ export type Teacher = {
     isEnabled:boolean,
     cf:string,
     piva:string
+    feedback:number
 }
 
 export type Request = {
@@ -72,7 +73,7 @@ export type FeedBackResponse = {
     score:number
 }
 
-export type NumericalObject = {
-    [key: string]: number;
-  };
+// export type NumericalObject = {
+//     [key: string]: number;
+//   };
 

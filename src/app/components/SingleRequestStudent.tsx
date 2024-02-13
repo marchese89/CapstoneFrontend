@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { FeedBackResponse, NumericalObject, Request, Solution } from "../types";
+import { FeedBackResponse, Request, Solution } from "../types";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
@@ -29,6 +29,9 @@ ul{
 	opacity:20%;
 	cursor: pointer;
 }
+.feed a{
+  opacity:10%;
+}
 .stars:hover a{
 	opacity:100%;
 }
@@ -47,7 +50,7 @@ ul{
     const [fileRequest, setFileRequest] = useState<string>();
     const [fileSolution,setFileSolution] = useState<string>();
     const [solutionList,setSolutionList] = useState<Solution[]>();
-    const [teacherFeedback,setTeacherFeedback] = useState<NumericalObject>({});
+    // const [teacherFeedback,setTeacherFeedback] = useState<NumericalObject>({});
     const router = useRouter();
     const dispatch = useDispatch();
 
@@ -100,45 +103,14 @@ ul{
               return response.json();
             })
             .then((sol:Solution[])=>{
-              //for each solution we need to get teacher's feedback
-              sol.forEach((s:Solution)=>{getFeedback(s.teacher.id)})
                 setSolutionList(sol);
                 console.log(sol);
-                // getFile(sol.solutionUrl,setFileSolutionContent);
             })
             .catch((error:Error)=>{
               console.log(error);
             })
     }
 
-    function getFeedback(idTeacher:number){
-      console.log("chiamo get feedback")
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/feedback/${idTeacher}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      })
-      .then((response: Response) => {
-        if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((r:FeedBackResponse)=>{
-        console.log("setto feedback "+r.score+" per l'insegnante "+idTeacher)
-        console.log(teacherFeedback);
-        setTeacherFeedback({
-          ...teacherFeedback,
-          [idTeacher]: r.score
-        })
-          
-      })
-      .catch((error:Error)=>{
-        console.log(error);
-      })
-    }
 
     function getRequest(){
             console.log("chiamo get request")
@@ -198,7 +170,7 @@ ul{
     },[])
 
     return (<StyledSingleRequestStudent>
-    <h2 className="text-center mt-4">{request?.title}</h2>
+    <h2 className="text-center mt-4">{request?.title} | Materia: {request?.subject.name}</h2>
         <div>
         <div className="flex justify-center items-center">
             {fileRequest && (
@@ -217,7 +189,20 @@ ul{
         <ul className="list-disc">
     {solutionList && solutionList.length > 0 && (solutionList.map((solution:Solution,i:number) =>(
       <li key={i} className="flex justify-between">
-        <div>{solution.teacher.name}&nbsp;{solution.teacher.surname}{' feedback: '+teacherFeedback[solution.teacher.id]}</div>
+        <div className="flex feed">
+        {solution.teacher.name}&nbsp;{solution.teacher.surname}
+        {' | feedback: '}
+            <a style={solution.teacher.feedback && solution.teacher.feedback > 0 ?{opacity: "100%"}:{}}
+                >⭐</a>
+            <a style={solution.teacher.feedback && solution.teacher.feedback > 1 ?{opacity: "100%"}:{}}
+                >⭐</a>
+            <a style={solution.teacher.feedback && solution.teacher.feedback > 2 ?{opacity: "100%"}:{}}
+            >⭐</a>
+            <a style={solution.teacher.feedback && solution.teacher.feedback > 3 ?{opacity: "100%"}:{}}
+                >⭐</a>
+            <a style={solution.teacher.feedback && solution.teacher.feedback > 4 ?{opacity: "100%"}:{}}
+                >⭐</a>
+        </div>
         <div className="flex">Prezzo: {solution.price/100}&euro;&nbsp;&nbsp;paga&nbsp;&nbsp;
         <svg onClick={()=>{
           dispatch(addPaymentData(solution.id,requestId,solution.price));

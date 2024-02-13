@@ -12,8 +12,9 @@ export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(()=>{
-    dispatch(loginAction(localStorage.getItem("userType")));
-    console.log("rendering home");
+    if(localStorage.getItem("userType")){
+      dispatch(loginAction(localStorage.getItem("userType")));
+    }
   },[])
   
 

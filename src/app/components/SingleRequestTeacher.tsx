@@ -195,14 +195,15 @@ type RquestParam= {
                   <span>Prezzo: {solution && (solution.price/100)}&euro;</span>
                 </div>
                 <div className="mt-4 mb-6">
-                  <span>Stato Soluzione: {solution && (solution.state)}</span>
+                  {solution && solution.state === 'ACCEPTED' && (<span className="rounded p-2 bg-green-500 text-white">Soluzione Accettata</span>) }
+                  {solution && solution.state === 'REJECTED' && (<span className="rounded p-2 bg-red-500 text-white">Soluzione Rifiutata</span>) }
                 </div>
                 </>
             )}
         </div>
         </div>
         </div>
-        {!fileSolutionContent && (
+        {(!fileSolutionContent && request && request.requestState === 'OPEN') && (
           <div className="text-center mb-6">
           <button
                               className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -211,6 +212,9 @@ type RquestParam= {
                               Carica Soluzione
                           </button>
                           </div>
+        )}
+        {(request && request.requestState === 'CLOSED') &&(
+          <div className="flex items-center justify-center"><h2 className="rounded p-2 mt-4 bg-red-500 inline-block text-white">Richiesta Chiusa</h2></div>
         )}
         
                     {/* Modal */}
