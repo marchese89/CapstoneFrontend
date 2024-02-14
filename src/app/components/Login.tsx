@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import {loginAction} from "../redux/actions"
@@ -26,6 +26,60 @@ export default function Login(): JSX.Element{
 
     const router = useRouter();
     const dispatch = useDispatch();
+    const [modalPasswordRecover,seModalPasswordRecover] = useState<boolean>(false);
+    const [email,setEmail] = useState<string>('');
+    const [isOpen,setIsOpen] = useState<boolean>(false);
+    const [modalTitle,setModalTitle] = useState<string>('');
+    const [modalMessage,setModalMessage] = useState<string>('');
+
+
+    function handlePasswordRecover(){
+      seModalPasswordRecover(false);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/recoverPass`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email:email
+        }),
+      })
+      .then((response: Response) => {
+        if (!(response.status === 200)) {
+          setEmail('');
+          if(response.status === 404){
+            throw new Error("notFound");
+          }else{
+            throw new Error("Network response was not ok");
+          }
+        }
+        setEmail('');
+        setModalTitle("Password recuperata");
+        setModalMessage("È stata creata una nuova password che ti è stata inviata via email");
+        setIsOpen(true);
+        setTimeout(()=>{
+          setIsOpen(false);
+        },1500)
+      })
+      
+      .catch((error:Error)=>{
+        if(error.message === "notFound"){
+          setModalTitle("Password NON recuperata");
+            setModalMessage("L'email che hai inserito non è presente nel database");
+            setIsOpen(true);
+            setTimeout(()=>{
+              setIsOpen(false);
+            },1500)
+        }else{
+        setModalTitle("Password NON recuperata");
+        setModalMessage("Ci sono stati problemi nel recupero della tua password");
+        setIsOpen(true);
+        setTimeout(()=>{
+          setIsOpen(false);
+        },1500)
+        }
+      })
+    }
 
     const [user,setUser] = useState<UserLoginDTO>(
         {
@@ -44,7 +98,6 @@ export default function Login(): JSX.Element{
 
     function handleSubmit(event: FormEvent<HTMLFormElement>){
         event.preventDefault();
-        console.log(user);
         setUser({
             email:'',
             password:'',
@@ -58,6 +111,14 @@ export default function Login(): JSX.Element{
           })
           .then((response: Response) => {
             if (!(response.status === 200)) {
+              if(response.status === 401){
+                setModalTitle("Login Fallito");
+                setModalMessage("Le credenziali che hai inserito non sono corrette");
+                setIsOpen(true);
+                setTimeout(()=>{
+                  setIsOpen(false);
+                },2000)
+              }
               throw new Error("Network response was not ok");
             }
             return response.json();
@@ -108,7 +169,8 @@ export default function Login(): JSX.Element{
                   Password
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500" 
+                  onClick={()=>{seModalPasswordRecover(true)}}>
                     Password dimenticata?
                   </a>
                 </div>
@@ -137,6 +199,70 @@ export default function Login(): JSX.Element{
             </div>
           </form>
         </div>
+         {/* Modal */}
+         {modalPasswordRecover && (
+                <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+                  
+                    <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+                      <div className="flex justify-end">
+                    <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" viewBox="0 0 24 24" 
+                    strokeWidth={1.5} 
+                    stroke="currentColor" 
+                    className="w-6 h-6 icon"
+                    onClick={()=>{seModalPasswordRecover(false)}}
+                    >
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+</svg></div>
+                        {/* Titolo */}
+                        <div className="mb-4">
+                            <h2 className="text-lg font-semibold text-center">Recupera Password</h2>
+                        </div>
+                        {/* Campo di input */}
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-center" >Email</label>
+                        <input
+                            type="email"
+                            className="border border-gray-300 rounded-md px-3 py-2 mb-3 w-full"
+                            value={email}
+                            onChange={(e)=>{setEmail(e.target.value);}}
+                            required
+                            autoFocus
+                        />
+                        
+                        
+                        {/* Bottone di submit */}
+                        <div className="text-center">
+                        <button
+                            className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                             onClick={handlePasswordRecover}
+                        >
+                            Recupera
+                        </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Modal */}
+            {isOpen && (
+                <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+                  
+                    <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+                      <div>
+                        {/* Titolo */}
+                        <div className="mb-4">
+                            <h2 className="text-lg font-semibold text-center">{modalTitle}</h2>
+                        </div>
+
+                        
+                   <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >{modalMessage}</label>
+              </div>
+
+                        </div>
+                    </div>
+                </div>
+            )}
         </StyledLogin>
     )
 }

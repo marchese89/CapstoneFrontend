@@ -27,6 +27,7 @@ export default function Header(): JSX.Element{
         localStorage.removeItem("userType");
         dispatch(logoutAction())
         router.push("/")
+        setMobileMenuOpen(false);
     }
 
     function gotoPersonalArea(){
@@ -37,6 +38,16 @@ export default function Header(): JSX.Element{
             router.push("/student_area");
             setMobileMenuOpen(false);
         }
+    }
+
+    function gotoRegister(){
+      router.push("/register");
+      setMobileMenuOpen(false);
+    }
+
+    function gotoLogin(){
+      router.push("/login");
+      setMobileMenuOpen(false);
     }
 
     useEffect(()=>{
@@ -90,11 +101,11 @@ export default function Header(): JSX.Element{
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           { !isLogged && 
             (<>
-          <a href="#" className="mr-4 text-sm font-semibold leading-6 text-gray-900 login-register" onClick={()=>{router.push("/register");}}>
+          <a href="#" className="mr-4 text-sm font-semibold leading-6 text-gray-900 login-register" onClick={gotoRegister}>
               Registrati <span aria-hidden="true" ></span>
             </a>
                     
-            <a href="#" className="text-sm font-semibold leading-6 text-gray-900" onClick={()=>{router.push("/login");}}>
+            <a href="#" className="text-sm font-semibold leading-6 text-gray-900" onClick={gotoLogin}>
               Log in <span aria-hidden="true"></span>
             </a></>
             )}
@@ -165,15 +176,15 @@ export default function Header(): JSX.Element{
             )}
             { !isLogged && 
             (<>
-          <a href="#" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={()=>{router.push("/register");}}>
+          <a href="#" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={gotoRegister}>
               Registrati <span aria-hidden="true" ></span>
             </a>
                     
-            <a href="#" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={()=>{router.push("/login");}}>
+            <a href="#" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={gotoLogin}>
               Log in <span aria-hidden="true"></span>
             </a></>
             )}
-                  {/* </a> */}
+                  
                 </div>
               </div>
             </div>

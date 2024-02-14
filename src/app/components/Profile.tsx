@@ -11,6 +11,11 @@ const StyledProfile = styled.div`
 export default function Profile():JSX.Element {
 
     const [isOpen,setIsOpen] = useState<boolean>(false);
+    const [oldPassword, setOldPassword] = useState<string>();
+    const [newPassword, setNewPassword] = useState<string>();
+    const [modalPassword,setModalPassword] = useState<boolean>(false);
+    const [modalTitle,setModalTitle] = useState<string>('');
+    const [modalMessage,setModalMessage] = useState<string>('');
 
     const [user,setUser] = useState<UserToModify>(
         {
@@ -51,16 +56,23 @@ export default function Profile():JSX.Element {
             if (!(response.status === 200)) {
               throw new Error("Network response was not ok");
             }
-            console.log("set is open true");
+            setModalTitle("Dati Modificati");
+            setModalMessage("I tuoi dati sono stati modificati correttamente");
             setIsOpen(true);
             setTimeout(()=>{
               setIsOpen(false);
-              console.log("set is open false");
               getUserDetails();
             },1500)
             
           })
           .catch((error:Error)=>{
+            setModalTitle("Dati NON Modificati");
+            setModalMessage("Ci sono stati problemi nella modifica dei tuoi dati");
+            setIsOpen(true);
+            setTimeout(()=>{
+              setIsOpen(false);
+              getUserDetails();
+            },1500)
             console.log(error);
           })
     }
@@ -113,6 +125,45 @@ export default function Profile():JSX.Element {
           .catch((error:Error)=>{
             console.log(error);
           })
+
+          
+    }
+
+    function modifyPassword(){
+      setModalPassword(false);
+
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/modPass`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify({
+          oldPassword: oldPassword,
+          newPassword: newPassword
+        })
+      })
+      .then((response: Response) => {
+        if (!(response.status === 201)) {
+          throw new Error("Network response was not ok");
+        }
+
+        setModalTitle("Password Modificata");
+        setModalMessage("La tua password è stata modificata correttamente");
+        setIsOpen(true);
+        setTimeout(()=>{
+          setIsOpen(false);
+        },1500)
+      }) 
+      .catch((error:Error)=>{
+        setModalTitle("Password NON Modificata");
+        setModalMessage("La tua password NON è stata modificata");
+        setIsOpen(true);
+        setTimeout(()=>{
+          setIsOpen(false);
+        },1500)
+        console.log(error);
+      })  
     }
 
     useEffect(()=>{
@@ -123,8 +174,66 @@ export default function Profile():JSX.Element {
     return <StyledProfile>
         <div>
             <h2 className="text-center mt-4">Modifica dati profilo</h2>
+            {/* plus */}
+    <div className="flex flex-col items-center justify-center plus icon mt-2">
+    <button onClick={()=>{setModalPassword(true)}}
+          className="rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2"
+        >
+          Modifica Password
+        </button>
+                    {/* Modal */}
+                    {modalPassword && (
+                <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+                  
+                    <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+                      <div className="flex justify-end">
+                    <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" viewBox="0 0 24 24" 
+                    strokeWidth={1.5} 
+                    stroke="currentColor" 
+                    className="w-6 h-6 icon"
+                    onClick={()=>{setModalPassword(false)}}
+                    >
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+</svg></div>
+                        {/* Titolo */}
+                        <div className="mb-4">
+                            <h2 className="text-lg font-semibold text-center">Modifica Password</h2>
+                        </div>
+                        {/* Campo di input */}
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Vecchia Password</label>
+                        <input
+                            type="password"
+                            className="border border-gray-300 rounded-md px-3 py-2 mb-3 w-full"
+                            value={oldPassword}
+                            onChange={(e)=>{setOldPassword(e.target.value);}}
+                            required
+                        />
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >Nuova Password</label>
+                        <input
+                            type="password"
+                            className="border border-gray-300 rounded-md px-3 py-2 mb-3 w-full"
+                            value={newPassword}
+                            onChange={(e)=>{setNewPassword(e.target.value);}}
+                            required
+                        />
+                        
+                        {/* Bottone di submit */}
+                        <div className="text-center">
+                        <button
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                             onClick={modifyPassword}
+                        >
+                            Modifica
+                        </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+</div>
             <form onSubmit={handleSubmit} >
-        <div className="border-b border-gray-900/10 pb-12 tailwind-form mx-auto max-w-screen-lg mx-8 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
+        <div className="border-b border-gray-900/10 pb-12 tailwind-form max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
@@ -297,12 +406,12 @@ export default function Profile():JSX.Element {
                       <div>
                         {/* Titolo */}
                         <div className="mb-4">
-                            <h2 className="text-lg font-semibold text-center">Dati Modificati</h2>
+                            <h2 className="text-lg font-semibold text-center">{modalTitle}</h2>
                         </div>
 
                         
                    <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >I tuoi dati sono stati modificati correttamente</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >{modalMessage}</label>
               </div>
 
                         </div>

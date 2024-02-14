@@ -251,6 +251,7 @@ export default function RequestsStudent(): JSX.Element {
                             placeholder="Nome richiesta..."
                             value={requestTitle}
                             onChange={handleInputChange}
+                            autoFocus
                             required
                         />
                         
