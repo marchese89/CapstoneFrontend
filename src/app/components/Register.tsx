@@ -131,11 +131,11 @@ export default function Register(): JSX.Element{
 
     <StyledRegister>
         <form onSubmit={handleSubmit}>
-        <div className="border-b border-gray-900/10 pb-12 tailwind-form mx-auto max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
+        <div className="border-b border-gray-900/10 pb-12 tailwind-form mx-auto max-w-screen-lg mx-8 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
         <h2 className="text-center font-semibold leading-7 text-gray-900">Registrazione</h2>
 
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
               Nome
             </label>
@@ -150,7 +150,7 @@ export default function Register(): JSX.Element{
             </div>
           </div>
 
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="surname" className="block text-sm font-medium leading-6 text-gray-900">
               Cognome
             </label>
@@ -165,7 +165,7 @@ export default function Register(): JSX.Element{
             </div>
           </div>
 
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
               Email address
             </label>
@@ -179,7 +179,7 @@ export default function Register(): JSX.Element{
               />
             </div>
           </div>
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
               Password
             </label>
@@ -193,7 +193,7 @@ export default function Register(): JSX.Element{
               />
             </div>
           </div>
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="cf" className="block text-sm font-medium leading-6 text-gray-900">
               Codice Fiscale
             </label>
@@ -209,7 +209,7 @@ export default function Register(): JSX.Element{
           </div>
           
 
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="role" className="block text-sm font-medium leading-6 text-gray-900">
               Ruolo
             </label>
@@ -227,7 +227,7 @@ export default function Register(): JSX.Element{
             </div>
           </div>
 
-          <div className="col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="street" className="block text-sm font-medium leading-6 text-gray-900">
               Via
             </label>

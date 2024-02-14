@@ -82,7 +82,7 @@ export default function Login(): JSX.Element{
 
     return(
       <StyledLogin>
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm outer-div">
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm outer-div mx-8">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">

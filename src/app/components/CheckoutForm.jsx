@@ -32,6 +32,10 @@ export default function CheckoutForm({ clientSecret }) {
   const requestIdFromRedux = useSelector((state) => state.payment.requestId);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const [paymentInProgress, setPaymentInProgress] = useState(false);
+  const [responseHeader, setResponseHeader] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
+
   const clientSecretFromRedux = useSelector(
     (state) => state.payment.clientSecret
   );
@@ -109,7 +113,7 @@ export default function CheckoutForm({ clientSecret }) {
       setErrorMessage(error.message);
       return;
     }
-
+    setPaymentInProgress(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/payments/confirm-payment`, {
       method: "POST",
       headers: {
@@ -124,17 +128,23 @@ export default function CheckoutForm({ clientSecret }) {
       }),
     })
       .then((res) => {
+        setPaymentInProgress(false);
         if (res.status === 401) {
           throw new Error("Problems with payment");
         }
-        res.json();
-      })
-      .then((data) => {
-        router.push(`/student_area/requests/${requestIdFromRedux}`);
-        // console.log(data.message);
+        console.log("pagamento ok");
+        dispatch(removePaymentData());
+        setResponseHeader("Pagamento completato");
+        setResponseMessage("Il suo pagamento è stato completato con successo");
+        setIsOpen(true);
+        // router.push(`/student_area/requests/${requestIdFromRedux}`);
       })
       .catch((error) => {
         dispatch(removePaymentData());
+        setResponseHeader("Problemi con il pagamento");
+        setResponseMessage(
+          "Ci sono stati problemi durante il pagamento, si prega di riprovare"
+        );
         setIsOpen(true);
         // console.log(error);
       });
@@ -205,13 +215,9 @@ export default function CheckoutForm({ clientSecret }) {
             </div>
             {/* Titolo */}
             <div className="mb-4 text-center">
-              <h2 className="text-lg font-semibold">
-                Problemi con il pagamento
-              </h2>
+              <h2 className="text-lg font-semibold">{responseHeader}</h2>
             </div>
-            <div>
-              Ci sono stati problemi durante il pagamento, si prega di riprovare
-            </div>
+            <div>{responseMessage}</div>
             <div className="text-center">
               {/* Bottone di submit */}
               <button
@@ -220,6 +226,27 @@ export default function CheckoutForm({ clientSecret }) {
               >
                 Chiudi
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal */}
+      {paymentInProgress && (
+        <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+          <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+            <div>
+              {/* Titolo */}
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-center">
+                  Pagamento in corso
+                </h2>
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Il suo pagamento è in corso, non lasciare questa pagina
+                </label>
+              </div>
             </div>
           </div>
         </div>

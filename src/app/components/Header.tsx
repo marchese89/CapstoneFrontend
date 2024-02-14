@@ -10,7 +10,6 @@ import { loginAction, logoutAction } from "../redux/actions";
 
 
 const StyledHeader = styled.div`
-    
 
 `;
 
@@ -32,9 +31,11 @@ export default function Header(): JSX.Element{
 
     function gotoPersonalArea(){
         if(localStorage.getItem("userType") === "TEACHER"){
-            router.push("/teacher_area")
+            router.push("/teacher_area");
+            setMobileMenuOpen(false);
         }else if(localStorage.getItem("userType") === "STUDENT"){
-            router.push("/student_area")
+            router.push("/student_area");
+            setMobileMenuOpen(false);
         }
     }
 
@@ -55,7 +56,7 @@ export default function Header(): JSX.Element{
     return (
         <StyledHeader>
         <header className="absolute inset-x-0 top-0 z-50">
-        <div><h1>Supporto Studenti</h1></div>
+        <div><h1 onClick={()=>{router.push("/")}}>Supporto Studenti</h1></div>
         <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
@@ -78,15 +79,15 @@ export default function Header(): JSX.Element{
             </button>
           </div>
           
-          <div className="hidden lg:flex lg:gap-x-12">
+          {/* <div className="hidden lg:flex lg:gap-x-12">
             {navigation.map((item) => (
               <a key={item.name} href={item.href} className="text-sm font-semibold leading-6 text-gray-900" onClick={item.click}>
                 {item.name}
               </a>
             ))}
-          </div>
+          </div> */}
           
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end login-register">
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           { !isLogged && 
             (<>
           <a href="#" className="mr-4 text-sm font-semibold leading-6 text-gray-900 login-register" onClick={()=>{router.push("/register");}}>
@@ -100,7 +101,7 @@ export default function Header(): JSX.Element{
             { isLogged && 
             (<>
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900 login-register mr-4" onClick={gotoPersonalArea}>
-              Area Personale <span aria-hidden="true" ></span>
+              Area Personale ({localStorage.getItem("userType") === "TEACHER"?'Insegnante':'Studente'})<span aria-hidden="true" ></span>
             </a>
                     
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900" onClick={logout}>
@@ -133,8 +134,8 @@ export default function Header(): JSX.Element{
             </div>
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
-                  {navigation.map((item) => (
+                <div className="space-y-2 pt-16 pb-4 px-2">
+                  {/* {navigation.map((item) => (
                     <a
                       key={item.name}
                       href={item.href}
@@ -142,9 +143,10 @@ export default function Header(): JSX.Element{
                     >
                       {item.name}
                     </a>
-                  ))}
+                  ))} */}
+                  <a className="-mx-3 block cursor-pointer rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={()=>{router.push("/");setMobileMenuOpen(false);}}>Home</a>
                 </div>
-                <div className="py-6">
+                <div className="pt-4">
                     
                   {/* <a
                     href="#"
@@ -153,8 +155,8 @@ export default function Header(): JSX.Element{
                     Log in */}
                     { isLogged && 
             (<>
-          <a href="#" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={()=>{router.push("");}}>
-              Area Personale <span aria-hidden="true" onClick={()=>{gotoPersonalArea()}}></span>
+          <a href="#" onClick={gotoPersonalArea} className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" >
+              Area Personale <span aria-hidden="true" ></span>
             </a>
                     
             <a href="#" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={logout}>

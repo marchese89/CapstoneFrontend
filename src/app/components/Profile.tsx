@@ -5,13 +5,12 @@ import { User, UserFromDB, UserToModify } from "../types";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 const StyledProfile = styled.div`
-        input {
-        text-indent: 3m !important;
-        outline: none;
-    }   
+         
 `;
 
 export default function Profile():JSX.Element {
+
+    const [isOpen,setIsOpen] = useState<boolean>(false);
 
     const [user,setUser] = useState<UserToModify>(
         {
@@ -49,10 +48,17 @@ export default function Profile():JSX.Element {
             body: JSON.stringify(user),
           })
           .then((response: Response) => {
-            if (!(response.status === 201)) {
+            if (!(response.status === 200)) {
               throw new Error("Network response was not ok");
             }
-            getUserDetails()
+            console.log("set is open true");
+            setIsOpen(true);
+            setTimeout(()=>{
+              setIsOpen(false);
+              console.log("set is open false");
+              getUserDetails();
+            },1500)
+            
           })
           .catch((error:Error)=>{
             console.log(error);
@@ -117,10 +123,10 @@ export default function Profile():JSX.Element {
     return <StyledProfile>
         <div>
             <h2 className="text-center mt-4">Modifica dati profilo</h2>
-            <form onSubmit={handleSubmit}>
-        <div className="border-b border-gray-900/10 pb-12 tailwind-form mx-auto max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
+            <form onSubmit={handleSubmit} >
+        <div className="border-b border-gray-900/10 pb-12 tailwind-form mx-auto max-w-screen-lg mx-8 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
               Nome
             </label>
@@ -135,7 +141,7 @@ export default function Profile():JSX.Element {
             </div>
           </div>
 
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="surname" className="block text-sm font-medium leading-6 text-gray-900">
               Cognome
             </label>
@@ -150,7 +156,7 @@ export default function Profile():JSX.Element {
             </div>
           </div>
 
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
               Email address
             </label>
@@ -164,7 +170,7 @@ export default function Profile():JSX.Element {
               />
             </div>
           </div>
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="cf" className="block text-sm font-medium leading-6 text-gray-900">
               Codice Fiscale
             </label>
@@ -179,7 +185,7 @@ export default function Profile():JSX.Element {
             </div>
           </div>
           
-          <div className="col-span-3">
+          <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="street" className="block text-sm font-medium leading-6 text-gray-900">
               Via
             </label>
@@ -283,5 +289,25 @@ export default function Profile():JSX.Element {
       
       </form>
         </div>
+                    {/* Modal */}
+                    {isOpen && (
+                <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+                  
+                    <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+                      <div>
+                        {/* Titolo */}
+                        <div className="mb-4">
+                            <h2 className="text-lg font-semibold text-center">Dati Modificati</h2>
+                        </div>
+
+                        
+                   <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >I tuoi dati sono stati modificati correttamente</label>
+              </div>
+
+                        </div>
+                    </div>
+                </div>
+            )}
         </StyledProfile>
 }
