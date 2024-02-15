@@ -53,6 +53,7 @@ export type Request = {
     invoice:Invoice
     student:Student
     feedback: FeedBack
+    date:Date
 }
 
 export type Solution = {

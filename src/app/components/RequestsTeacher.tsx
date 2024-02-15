@@ -2,7 +2,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Subject,Request } from "../types";
+import { Request } from "../types";
+import { format } from 'date-fns';
 
 const StyledRequestsStudent = styled.div`
     text-align: center;
@@ -83,13 +84,14 @@ const StyledRequestsStudent = styled.div`
         margin-right: 3em;
       }
   }
+  /* and (max-width: 768px) */
 
   @media screen and(min-width: 768px) {
     .subjects-mobile{
         display: none;
       }
   }
-  li{
+  .request{
           min-width: 300px;
           background-color: aliceblue;
           margin: 0.4em;
@@ -109,6 +111,7 @@ export default function RequestsTeacher(): JSX.Element {
   const [maxPage, setMaxPage] = useState(1);
   const [pages, setPages] = useState<number[]>();
   const [selectedPage, setSelectedPage] = useState<string|number>(0);
+  const [sortDirection,setSortDirection] = useState<string>('desc');
   const router = useRouter()
 
   const handleCheckboxChangeOpen = () => {
@@ -121,7 +124,7 @@ export default function RequestsTeacher(): JSX.Element {
      
 
   function getRequests(page:number){
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/byTeacher?page=${page}&size=5`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/byTeacher?page=${page}&size=5&direction=${sortDirection}&orderBy=date`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -151,8 +154,11 @@ export default function RequestsTeacher(): JSX.Element {
   }
 
   useEffect(()=>{
-    getRequests(0);
-  },[])
+    const sp = Number(selectedPage);
+      if(!isNaN(sp)){
+        getRequests(sp);
+      }
+  },[sortDirection])
 
 
 
@@ -164,16 +170,30 @@ export default function RequestsTeacher(): JSX.Element {
     <input name="closed" type="checkbox" checked={closedRequests}
             onChange={handleCheckboxChangeClose} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"/>
     <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Chiuse</label>
+    &nbsp;|Ordina per data 
+    {sortDirection === 'desc' && (
+      <svg onClick={()=>setSortDirection('asc')}  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 cursor-pointer">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+    </svg>
+    )}
+    {sortDirection === 'asc' && (
+      <svg onClick={()=>setSortDirection('desc')} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 cursor-pointer">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+    </svg>
+    )}
+    
+
 </div>
 <div className="subjects flex flex-column">
 
   {/* <ul className="list-disc"> */}
-  <table className="rounded overflow-hidden requests-table">
+  <table className="rounded overflow-hidden requests-table h-1">
     <thead>
       <tr>
         <th className="px-6 py-3 bg-gray-50 text-center text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Titolo</th>
         <th className="px-6 py-3 bg-gray-50 text-center text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Materia</th>
         <th className="px-6 py-3 bg-gray-50 text-center text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Studente</th>
+        <th className="px-6 py-3 bg-gray-50 text-center text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Data</th>
         <th className="px-6 py-3 bg-gray-50 text-center text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Stato</th>
         <th className="px-6 py-3 bg-gray-50 text-center text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">Dettagli</th>
       </tr>
@@ -187,9 +207,11 @@ export default function RequestsTeacher(): JSX.Element {
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.title}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.subject.name}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{` ${request.student.name} ${request.student.surname}  `}</td>
+        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{` ${format(request.date,'dd/MM/yyyy HH:mm:ss')}`}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}</td>
-        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap flex justify-center">
+        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">
         {/* <div className="flex">{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}&nbsp; */}
+        <div className="flex justify-center">
         <svg 
           onClick={()=>{router.push(`/teacher_area/requests/${request.id}`)}} 
           xmlns="http://www.w3.org/2000/svg" 
@@ -202,6 +224,7 @@ export default function RequestsTeacher(): JSX.Element {
           strokeLinejoin="round" 
           d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
         </svg>
+        </div>
         </td>
         </tr>
       )
@@ -213,22 +236,41 @@ export default function RequestsTeacher(): JSX.Element {
 </div> 
 
 <div className="subjects-mobile hidden">
-  <ul className="list-disc">
+  <div className="list-disc">
     {requestsList.map((request:Request,i:number) =>(
       (((request.requestState === 'OPEN' && openedRequests))||((request.requestState === 'CLOSED' && closedRequests))) &&
-      (<li key={i} className="flex justify-between">
+      (<div key={i} className="flex justify-between flex-col request">
+        <div className="flex flex-col">
+        <strong>Titolo</strong>
         {request.title}
-        <div className="flex">
-          {request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}&nbsp;
+        </div>
+        <div className="flex flex-col">
+        <strong>Materia</strong>
+        {request.subject.name}
+        </div>
+        <div className="flex flex-col">
+        <strong>Studente</strong>
+        {request.student.name}{' '}{request.student.surname}
+        </div>
+       
+        <div className="flex justify-center flex-col">
+        <strong>Data Richiesta</strong>
+        {format(request.date,'dd/MM/yyyy HH:mm:ss')}
+          </div>
+        <div className="flex justify-center flex-col">
+        <strong>Stato Richiesta</strong>
+          {request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}
+          </div>
+          <div className="flex justify-center">
         <svg onClick={()=>{router.push(`/teacher_area/requests/${request.id}`)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 icon">
   <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
 </svg>
 
   </div>
-      </li>)
+      </div>)
     ))
     }
-</ul>
+</div>
 </div>
 <div className="flex justify-center mt-4">
         {pages && pages.map((page, i) => (
