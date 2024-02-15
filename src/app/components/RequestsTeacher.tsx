@@ -45,17 +45,10 @@ const StyledRequestsStudent = styled.div`
     align-items: center;
     &:hover {
       cursor: pointer;
-      /* color: #03989e;
-      background-color: white;
-      font-weight: bold;
-      border: 1px solid #03989e; */
     }
   }
   .link.selected {
-    /* color: #03989e; */
-    /* background-color: white; */
     font-weight: bold;
-    /* border: 1px solid #03989e; */
     background-color: darkslategrey;
   }
   .requests-table{
@@ -141,7 +134,7 @@ export default function RequestsTeacher(): JSX.Element {
       const totPages = requestsPage.totalPages;
         setMaxPage(requestsPage.totalPages - 1);
         const array = [];
-        for (let i = 0; i < totPages && i <= 10; i++) {
+        for (let i = 0; i < totPages && i <= 4; i++) {
           array.push(i);
         }
         setPages(array);
