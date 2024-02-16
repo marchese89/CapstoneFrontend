@@ -1,12 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { FeedBackResponse, Request, Solution } from "../types";
+import { Request, Solution } from "../types";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { addPaymentData } from "../redux/actions";
-import Image from "next/image";
 
 type StudentParam= {
     requestId: number
@@ -50,11 +49,15 @@ ul{
     const [fileRequest, setFileRequest] = useState<string>();
     const [fileSolution,setFileSolution] = useState<string>();
     const [solutionList,setSolutionList] = useState<Solution[]>();
-    // const [teacherFeedback,setTeacherFeedback] = useState<NumericalObject>({});
+    const [typeRequest, setTypeRequest] = useState<string>();
+    const [typeSolution,setTypeSolution] = useState<string>();
+    const [fileInvoice,setFileInvoice] = useState<string>();
+    const [typeInvoice,setTypeInvoice] = useState<string>();
+    
     const router = useRouter();
     const dispatch = useDispatch();
 
-    function getFile(pathname:string,setFile:(url:string)=>void){
+    function getFile(pathname:string,setFile:(url:string)=>void,setType:(type:string)=>void){
 
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file`, {
             method: "POST",
@@ -67,6 +70,10 @@ ul{
         .then((response:Response) => {
             if (!response.ok) {
                 throw new Error('Errore nella richiesta: ' + response.statusText);
+            }
+            const type = response.headers.get('content-type');
+            if(type){
+              setType(type);
             }
             return response.blob();
         })
@@ -82,9 +89,7 @@ ul{
     }
 
     function getSolutionList(){
-      console.log("chiamo get solution list");
       if(!requestId){
-        console.log("esco subito da get solution list");
         return;
       }
             fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/solutions/getByRequestId/${requestId}`, {
@@ -113,7 +118,7 @@ ul{
 
 
     function getRequest(){
-            console.log("chiamo get request")
+        
             fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/student/${requestId}`, {
               method: "GET",
               headers: {
@@ -129,11 +134,12 @@ ul{
             })
             .then((req:Request)=>{
                 setRequest(req);
-                getFile(req.questionUrl,setFileRequest);
+                getFile(req.questionUrl,setFileRequest,setTypeRequest);
                 if(req.requestState === "OPEN"){
                   getSolutionList();
                 }else{
-                  getFile(req.solutionUrl,setFileSolution)
+                  getFile(req.solutionUrl,setFileSolution,setTypeSolution)
+                  getFile(req.invoice.invoiceFileUrl,setFileInvoice,setTypeInvoice);
                 }
                 console.log(req);
             })
@@ -170,22 +176,21 @@ ul{
     },[])
 
     return (<StyledSingleRequestStudent>
-    <h2 className="text-center mt-4">{request?.title} | Materia: {request?.subject.name}</h2>
+    <h2 className="text-center mt-4">{request?.title} | <strong>Materia:</strong> {request?.subject.name}</h2>
         <div>
         <div className="flex justify-center items-center">
-            {fileRequest && (
-                <img className="mt-4"
-                    src={fileRequest}
-                    // title="File Viewer"
-                    style={{width: "70%",borderRadius:"7px"}}
-                    alt="question image"
+            {(fileRequest && fileRequest && typeRequest) && (
+                <embed className="mt-4"
+                    src={fileRequest+`${typeRequest === 'application/pdf'?'#view=FitH':''}`}
+                    type={typeRequest}
+                    style={{width: "70%",borderRadius:"7px",height: "700px"}}
                 />
             )}
         </div>
         </div>
         <div className="text-center flex flex-col items-center mb-4">
-        <h2 className="text-center mt-4">{
-        (request && request.requestState === "OPEN") ? 'Soluzioni': 'Soluzione'}</h2>
+        <h2 className="text-center mt-4"><strong>{
+        (request && request.requestState === "OPEN") ? 'Soluzioni': 'Soluzione'}</strong></h2>
         <ul className="list-disc">
     {solutionList && solutionList.length > 0 && (solutionList.map((solution:Solution,i:number) =>(
       <li key={i} className="flex justify-between">
@@ -218,12 +223,12 @@ ul{
     ))
     )}
 </ul>
-{(request && request.solutionUrl) && (<>
-  <img className="mt-4"
-  src={fileSolution}
-  // title="File Viewer"
-  style={{width: "70%",borderRadius:"7px"}}
-  alt="question image"
+{(request && request.solutionUrl && fileSolution && typeSolution) && (<>
+  <embed className="mt-4"
+  src={fileSolution+`${typeSolution === 'application/pdf'?'#view=FitH':''}`}
+  type={typeSolution}
+  style={{width: "70%",borderRadius:"7px",height: "700px"}}
+
 />
 <h2 className="mt-4">Feedback insegnante</h2>
 <div className="stars" id="stars">
@@ -239,6 +244,17 @@ ul{
                 onClick={()=>{sendFeedBack(5)}}>⭐</a>
         </div>
 </>
+)}
+{(fileInvoice && typeInvoice) &&(
+  <>
+  <h2><strong>Fattura</strong></h2>
+  <embed className="mt-4"
+  src={fileInvoice+`${typeInvoice === 'application/pdf'?'#view=FitH':''}`}
+  type={typeInvoice}
+  style={{width: "70%",borderRadius:"7px",height: "700px"}}
+
+/>
+  </>
 )}
 </div>
     </StyledSingleRequestStudent>);
