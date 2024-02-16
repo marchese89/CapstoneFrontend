@@ -224,6 +224,7 @@ export default function RequestsStudent(): JSX.Element {
         getRequests(sp);
       }
     
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[sortDirection])
 
   useEffect(()=>{

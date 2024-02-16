@@ -5,7 +5,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import stripePromise from '../utils/stripe';
 import { FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +35,7 @@ export default function CheckoutForm({ clientSecret }) {
   const [paymentInProgress, setPaymentInProgress] = useState(false);
   const [responseHeader, setResponseHeader] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
+  const [user, setUser] = useState();
 
   const clientSecretFromRedux = useSelector(
     (state) => state.payment.clientSecret
@@ -76,6 +77,28 @@ export default function CheckoutForm({ clientSecret }) {
     //   });
   }, [stripe]);
 
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/me`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+    })
+      .then((response) => {
+        if (!(response.status === 200)) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -102,11 +125,12 @@ export default function CheckoutForm({ clientSecret }) {
       // type: "card",
       // card: cardElement,
       elements,
-      // params: {
-      //   billing_details: {
-      //     name: "Jenny Rosen",
-      //   },
-      // },
+      params: {
+        billing_details: {
+          name: user.name + " " + user.surname,
+          email: user.email,
+        },
+      },
     });
 
     if (error) {

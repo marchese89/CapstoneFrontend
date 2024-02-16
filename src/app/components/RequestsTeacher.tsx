@@ -151,6 +151,7 @@ export default function RequestsTeacher(): JSX.Element {
       if(!isNaN(sp)){
         getRequests(sp);
       }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[sortDirection])
 
 
