@@ -11,16 +11,23 @@ type RquestParam= {
 
     const [request,setRequest] = useState<Request>();
     const [fileContent, setFileContent] = useState<string>();
+    const [fileContentType,setFileContentType] = useState<string>();
     const [fileSolutionContent, setFileSolutionContent] = useState<string>();
+    const [fileSolutionType, setFileSolutionType] = useState<string>();
     const inputRef = useRef<HTMLInputElement>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [selectedFile, setSelectedFile] = useState<File>();
     const [solutionPrice,setSolutionPrice] = useState<string>('');
     const [solution,setSolution] = useState<Solution>();
+    const [fileInvoice,setFileInvoice] = useState<string>();
+    const [typeInvoice,setTypeInvoice] = useState<string>();
+    const [isOpenMessage,setIsOpenMessage] = useState<boolean>(false);
+    const [responseHeader, setResponseHeader] = useState("");
+    const [responseMessage, setResponseMessage] = useState("");
 
     useEffect(()=>{
       getSolution();
-    },[])
+    },[request])
 
     useEffect(() => {
       if (isOpen && inputRef.current) {
@@ -28,9 +35,8 @@ type RquestParam= {
       }
   }, [isOpen]);
 
-    function getFile(pathname:string,setFile:(url:string)=>void){
-      console.log("chiamo get file "+pathname);
-
+    function getFile(pathname:string,setFile:(url:string)=>void,setType:(type:string)=>void){
+      
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file`, {
             method: "POST",
             headers: {
@@ -43,11 +49,14 @@ type RquestParam= {
             if (!response.ok) {
                 throw new Error('Errore nella richiesta: ' + response.statusText);
             }
+            const type = response.headers.get('content-type');
+            if(type){
+              setType(type);
+            }
             return response.blob();
         })
         .then((blob:Blob) => {
               const url = URL.createObjectURL(blob);
-              // setFileContent(url);
               setFile(url)
             
         })
@@ -57,9 +66,7 @@ type RquestParam= {
     }
 
     function getRequest(){
-      if(request){
-        return;
-      }
+      
             fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/teacher/${requestId}`, {
               method: "GET",
               headers: {
@@ -75,7 +82,7 @@ type RquestParam= {
             })
             .then((req:Request)=>{
                 setRequest(req);
-                getFile(req.questionUrl,setFileContent);
+                getFile(req.questionUrl,setFileContent,setFileContentType);
             })
             .catch((error:Error)=>{
               console.log(error);
@@ -83,9 +90,8 @@ type RquestParam= {
     }
 
     function getSolution(){
-      console.log("chiamo get solution");
+      
       if(!requestId){
-        console.log("esco subito da get solution");
         return;
       }
             fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/solutions/getByRequestIdAndTeacher/${requestId}`, {
@@ -105,7 +111,12 @@ type RquestParam= {
             })
             .then((sol:Solution)=>{
                 setSolution(sol);
-                getFile(sol.solutionUrl,setFileSolutionContent);
+                getFile(sol.solutionUrl,setFileSolutionContent,setFileSolutionType);
+                if(request && sol.state === "ACCEPTED"){
+                  getFile(request.invoice.invoiceFileUrl,setFileInvoice,setTypeInvoice);
+                }else{
+                  console.log("request: "+request);
+                }
             })
             .catch((error:Error)=>{
               console.log(error);
@@ -132,7 +143,7 @@ type RquestParam= {
     };
 
     function addSolution(){
-      console.log("chiamo add solution");
+
       const formData = new FormData();
       if(selectedFile){
           formData.append("file", selectedFile);
@@ -152,7 +163,13 @@ type RquestParam= {
       })
       .then((response: Response) => {
         if (!(response.status === 201)) {
-          throw new Error("Network response was not ok");
+          if(response.status === 400){
+            setResponseHeader("Invio Richiesta Fallito");
+            setResponseMessage("Ci sono stati problemi con il caricamento del file");
+            setIsOpenMessage(true);
+          }else{
+            throw new Error("Network response was not ok");
+          }
         }
         getSolution();
       })
@@ -167,17 +184,19 @@ type RquestParam= {
       setSelectedFile(fileList[0]);
     };
 
+    function handleCloseMessage(){
+      setIsOpenMessage(false);
+    }
+
     return (<>
     <h2 className="text-center mt-4">{request?.title}</h2>
         <div>
         <div className="flex justify-center items-center">
             {fileContent && (
-                <img className="mt-4"
-                    src={fileContent}
-                    // title="File Viewer"
-                    style={{width: "70%",borderRadius:"7px"}}
-                    alt="question image"
-                />
+              <embed className="mt-4"
+              src={fileContent+`${fileContentType === 'application/pdf'?'#view=FitH':''}`}
+              type={fileContentType}
+            />
             )}
         </div>
         <div>
@@ -185,11 +204,9 @@ type RquestParam= {
           
             {fileSolutionContent && (<>
               <h2 className="text-center mt-4">Soluzione</h2>
-                <img className="mt-4"
-                    src={fileSolutionContent}
-                    // title="File Viewer"
-                    style={{width: "70%",borderRadius:"7px"}}
-                    alt="question image"
+                <embed className="mt-4"
+                    src={fileSolutionContent+`${fileSolutionType === 'application/pdf'?'#view=FitH':''}`}
+                    type={fileSolutionType}
                 />
                 <div className="mt-4">
                   <span>Prezzo: {solution && (solution.price/100)}&euro;</span>
@@ -198,6 +215,17 @@ type RquestParam= {
                   {solution && solution.state === 'ACCEPTED' && (<span className="rounded p-2 bg-green-500 text-white">Soluzione Accettata</span>) }
                   {solution && solution.state === 'REJECTED' && (<span className="rounded p-2 bg-red-500 text-white">Soluzione Rifiutata</span>) }
                 </div>
+                {(fileInvoice && typeInvoice) &&(
+  <>
+  <h2><strong>Fattura</strong></h2>
+  <embed className="mt-4"
+  src={fileInvoice+`${typeInvoice === 'application/pdf'?'#view=FitH':''}`}
+  type={typeInvoice}
+  // style={{width: "70%",borderRadius:"7px",height: "700px"}}
+
+/>
+  </>
+)}
                 </>
             )}
         </div>
@@ -269,6 +297,44 @@ type RquestParam= {
                     </div>
                 </div>
             )}
+                          {/* Modal */}
+      {isOpenMessage && (
+        <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+          <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+            <div className="flex justify-end">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 icon"
+                onClick={handleCloseMessage}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+            {/* Titolo */}
+            <div className="mb-4 text-center">
+              <h2 className="text-lg font-semibold">{responseHeader}</h2>
+            </div>
+            <div>{responseMessage}</div>
+            <div className="text-center">
+              {/* Bottone di submit */}
+              <button
+                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={handleCloseMessage}
+              >
+                Chiudi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>);
 }
 

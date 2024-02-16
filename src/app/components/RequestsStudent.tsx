@@ -104,6 +104,9 @@ export default function RequestsStudent(): JSX.Element {
   const [subjectList,setSubjectList] = useState<Subject[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenMessage,setIsOpenMessage] = useState<boolean>(false);
+  const [responseHeader, setResponseHeader] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
   const [requestTitle, setrequestTitle] = useState<string>('');
   const [subjectId,setSubjectId] = useState<number>(-1);
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -148,7 +151,13 @@ export default function RequestsStudent(): JSX.Element {
     })
     .then((response: Response) => {
       if (!(response.status === 201)) {
-        throw new Error("Network response was not ok");
+        if(response.status === 400){
+          setResponseHeader("Invio Richiesta Fallito");
+          setResponseMessage("Ci sono stati problemi con il caricamento del file");
+          setIsOpenMessage(true);
+        }else{
+          throw new Error("Network response was not ok");
+        }
       }
       const sp = Number(selectedPage);
       if(!isNaN(sp)){
@@ -254,14 +263,14 @@ export default function RequestsStudent(): JSX.Element {
   };
 
   const handleSubmit = () => {
-        addRequest();
         closeModal();
+        addRequest();
   };
 
-//   function modify(id:number,name:string){
-//     setrequestTitle(name);
-//     openModal();
-//   }
+  function handleCloseMessage(){
+    setIsOpenMessage(false);
+  }
+
 
 
   return <StyledRequestsStudent>
@@ -458,6 +467,43 @@ export default function RequestsStudent(): JSX.Element {
                     </div>
                 </div>
             )}
-        
+              {/* Modal */}
+      {isOpenMessage && (
+        <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+          <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+            <div className="flex justify-end">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 icon"
+                onClick={handleCloseMessage}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+            {/* Titolo */}
+            <div className="mb-4 text-center">
+              <h2 className="text-lg font-semibold">{responseHeader}</h2>
+            </div>
+            <div>{responseMessage}</div>
+            <div className="text-center">
+              {/* Bottone di submit */}
+              <button
+                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={handleCloseMessage}
+              >
+                Chiudi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 </StyledRequestsStudent>;
 }

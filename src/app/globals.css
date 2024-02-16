@@ -44,3 +44,19 @@ h1:hover {
   background: #888; /* Colore della barra di scorrimento */
   border-radius: 4px; /* Bordo arrotondato */
 }
+
+@media screen and (max-width: 768px) {
+  embed {
+    width: 95%;
+    border-radius: 7px;
+    height: 500px;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  embed {
+    width: 70%;
+    border-radius: 7px;
+    height: 700px;
+  }
+}

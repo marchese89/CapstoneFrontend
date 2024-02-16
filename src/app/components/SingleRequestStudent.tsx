@@ -79,7 +79,6 @@ ul{
         })
         .then((blob:Blob) => {
               const url = URL.createObjectURL(blob);
-              // setFileContent(url);
               setFile(url);
             
         })
@@ -183,7 +182,6 @@ ul{
                 <embed className="mt-4"
                     src={fileRequest+`${typeRequest === 'application/pdf'?'#view=FitH':''}`}
                     type={typeRequest}
-                    style={{width: "70%",borderRadius:"7px",height: "700px"}}
                 />
             )}
         </div>
@@ -227,8 +225,6 @@ ul{
   <embed className="mt-4"
   src={fileSolution+`${typeSolution === 'application/pdf'?'#view=FitH':''}`}
   type={typeSolution}
-  style={{width: "70%",borderRadius:"7px",height: "700px"}}
-
 />
 <h2 className="mt-4">Feedback insegnante</h2>
 <div className="stars" id="stars">
@@ -251,7 +247,6 @@ ul{
   <embed className="mt-4"
   src={fileInvoice+`${typeInvoice === 'application/pdf'?'#view=FitH':''}`}
   type={typeInvoice}
-  style={{width: "70%",borderRadius:"7px",height: "700px"}}
 
 />
   </>
