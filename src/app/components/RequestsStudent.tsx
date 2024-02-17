@@ -16,18 +16,7 @@ const StyledRequestsStudent = styled.div`
     .subjects{
       display: flex;
       justify-content: center;
-      
-      ul{
-        list-style-type: none;
-        li{
-          min-width: 300px;
-          background-color: aliceblue;
-          margin: 0.4em;
-          padding: 0.5em;
-          border-radius: 5px;
-          
-        }
-      }
+      height: 330px;
       
     }
     .icon{
@@ -56,7 +45,7 @@ const StyledRequestsStudent = styled.div`
   }
   .requests-table{
     width: 60%;
-    
+
   }
   @media screen and (max-width: 640px) {
       .requests-table{
@@ -280,10 +269,10 @@ export default function RequestsStudent(): JSX.Element {
   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 </svg>
 <div className="flex items-center mb-4">
-    <input id="default-checkbox" type="checkbox" checked={openedRequests}
+    <input name="opened" type="checkbox" checked={openedRequests}
             onChange={handleCheckboxChangeOpen} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"/>
     <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">Aperte</label>
-    <input id="default-checkbox" type="checkbox" checked={closedRequests}
+    <input name="closed" type="checkbox" checked={closedRequests}
             onChange={handleCheckboxChangeClose} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"/>
     <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Chiuse</label>
     &nbsp;|Ordina per data 
@@ -314,14 +303,12 @@ export default function RequestsStudent(): JSX.Element {
     {requestsList.map((request:Request,i:number) =>(
       (((request.requestState === 'OPEN' && openedRequests))||((request.requestState === 'CLOSED' && closedRequests))) &&
       (
-      // <li key={i} className="flex justify-between">
-        <tr key={i}>
+        <tr key={i} >
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.title}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.subject.name}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{` ${format(request.date,'dd/MM/yyyy HH:mm:ss')}`}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">
-        {/* <div className="flex">{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}&nbsp; */}
         <div className="flex justify-center">
         <svg 
           onClick={()=>{router.push(`/student_area/requests/${request.id}`)}} 

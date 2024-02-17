@@ -17,17 +17,6 @@ const StyledRequestsStudent = styled.div`
       display: flex;
       justify-content: center;
       height: 330px;
-      ul{
-        list-style-type: none;
-        li{
-          min-width: 300px;
-          background-color: aliceblue;
-          margin: 0.4em;
-          padding: 0.5em;
-          border-radius: 5px;
-          
-        }
-      }
       
     }
     .icon{
@@ -180,7 +169,6 @@ export default function RequestsTeacher(): JSX.Element {
 </div>
 <div className="subjects flex flex-column">
 
-  {/* <ul className="list-disc"> */}
   <table className="rounded overflow-hidden requests-table h-1">
     <thead>
       <tr>
@@ -196,7 +184,6 @@ export default function RequestsTeacher(): JSX.Element {
     {requestsList.map((request:Request,i:number) =>(
       (((request.requestState === 'OPEN' && openedRequests))||((request.requestState === 'CLOSED' && closedRequests))) &&
       (
-      // <li key={i} className="flex justify-between">
         <tr key={i}>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.title}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.subject.name}</td>
@@ -204,7 +191,6 @@ export default function RequestsTeacher(): JSX.Element {
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{` ${format(request.date,'dd/MM/yyyy HH:mm:ss')}`}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">
-        {/* <div className="flex">{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}&nbsp; */}
         <div className="flex justify-center">
         <svg 
           onClick={()=>{router.push(`/teacher_area/requests/${request.id}`)}} 
