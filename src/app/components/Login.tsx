@@ -10,6 +10,22 @@ const StyledLogin = styled.div`
     .outer-div{
       margin-top: 10em;
     }
+    @keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-10px); }
+  80% { transform: translateX(10px); }
+  100% { transform: translateX(0); }
+  
+}
+
+.shake-element {
+  animation: shake 0.5s ease-in-out;
+  input{
+    background-color: salmon;
+  }
+}
 `;
 type UserLoginDTO = {
     email:string;
@@ -31,6 +47,7 @@ export default function Login(): JSX.Element{
     const [isOpen,setIsOpen] = useState<boolean>(false);
     const [modalTitle,setModalTitle] = useState<string>('');
     const [modalMessage,setModalMessage] = useState<string>('');
+    const [isShaked,setIsShaked] = useState<boolean>(false);
 
 
     function handlePasswordRecover(){
@@ -111,16 +128,20 @@ export default function Login(): JSX.Element{
           })
           .then((response: Response) => {
             if (!(response.status === 200)) {
-              if(response.status === 401){
+              
+              if(response.status === 400 || response.status === 401){
+                setIsShaked(true);
                 setModalTitle("Login Fallito");
                 setModalMessage("Le credenziali che hai inserito non sono corrette");
                 setIsOpen(true);
                 setTimeout(()=>{
                   setIsOpen(false);
+                  setIsShaked(false);
                 },2000)
               }
               throw new Error("Network response was not ok");
             }
+            setIsShaked(false);
             return response.json();
           })
           .then((loginResponse:TokenDTO)=>{
@@ -143,7 +164,7 @@ export default function Login(): JSX.Element{
 
     return(
       <StyledLogin>
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm outer-div mx-8">
+        <div className={`mt-10 sm:mx-auto sm:w-full sm:max-w-sm outer-div mx-8 shake ${isShaked?` shake-element`:``}`}>
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">

@@ -161,6 +161,9 @@ export default function Profile():JSX.Element {
         setIsOpen(true);
         setTimeout(()=>{
           setIsOpen(false);
+          setOldPassword('');
+          setNewPassword('');
+          setModalPassword(true);
         },1500)
         console.log(error);
       })  
@@ -218,7 +221,12 @@ export default function Profile():JSX.Element {
                             onChange={(e)=>{setNewPassword(e.target.value);}}
                             required
                         />
-                        
+                        <div className="mb-2 text-center">
+          <p>La password deve avere almeno 10 caratteri,</p> 
+          <p>un numero, una lettera maiuscola una minuscola e almeno uno</p> 
+          <p>tra i seguenti caratteri speciali: (.:;?!@#,&gt;&lt;[]{}</p>
+          <p>inoltre non possono esserci più di due caratteri uguali ripetuti</p>
+        </div>
                         {/* Bottone di submit */}
                         <div className="text-center">
                         <button
@@ -228,6 +236,7 @@ export default function Profile():JSX.Element {
                             Modifica
                         </button>
                         </div>
+                        
                     </div>
                 </div>
             )}

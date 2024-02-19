@@ -7,7 +7,8 @@ export type Invoice = {
     id:number,
     number:number,
     invoiceFileUrl:string,
-    issuingDate:Date
+    issuingDate:Date,
+    total:number
 }
 
 export type Address = {

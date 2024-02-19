@@ -133,11 +133,11 @@ export default function Register(): JSX.Element{
         <form onSubmit={handleSubmit}>
         <div className="border-b border-gray-900/10 pb-12 tailwind-form max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
         <h2 className="text-center font-semibold leading-7 text-gray-900">Registrazione</h2>
-
+        <div>(<strong>*</strong>) {`=>`} campi obbligatori</div>
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
-              Nome
+              Nome<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -152,7 +152,7 @@ export default function Register(): JSX.Element{
 
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="surname" className="block text-sm font-medium leading-6 text-gray-900">
-              Cognome
+              Cognome<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -167,7 +167,7 @@ export default function Register(): JSX.Element{
 
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-              Email address
+              Email address<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -181,7 +181,7 @@ export default function Register(): JSX.Element{
           </div>
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-              Password
+              Password<strong>* **</strong>
             </label>
             <div className="mt-2">
               <input
@@ -195,7 +195,7 @@ export default function Register(): JSX.Element{
           </div>
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="cf" className="block text-sm font-medium leading-6 text-gray-900">
-              Codice Fiscale
+              Codice Fiscale<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -209,9 +209,9 @@ export default function Register(): JSX.Element{
           </div>
           
 
-          <div className="sm:col-span-6 lg:col-span-3">
+          <div className="sm:col-span-6 lg:col-span-1">
             <label htmlFor="role" className="block text-sm font-medium leading-6 text-gray-900">
-              Ruolo
+              Ruolo<strong>*</strong>
             </label>
             <div className="mt-2">
               <select
@@ -229,7 +229,7 @@ export default function Register(): JSX.Element{
 
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="street" className="block text-sm font-medium leading-6 text-gray-900">
-              Via
+              Via<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -243,7 +243,7 @@ export default function Register(): JSX.Element{
           </div>
           <div className="col-span-1">
             <label htmlFor="houseNumber" className="block text-sm font-medium leading-6 text-gray-900">
-              Numero Civico
+              Numero Civico<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -258,7 +258,7 @@ export default function Register(): JSX.Element{
 
           <div className="sm:col-span-2 sm:col-start-1">
             <label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
-              Città
+              Città<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -273,7 +273,7 @@ export default function Register(): JSX.Element{
 
           <div className="sm:col-span-1">
             <label htmlFor="province" className="block text-sm font-medium leading-6 text-gray-900">
-              Provincia
+              Provincia<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -288,7 +288,7 @@ export default function Register(): JSX.Element{
 
           <div className="sm:col-span-1">
             <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
-              CAP
+              CAP<strong>*</strong>
             </label>
             <div className="mt-2">
               <input
@@ -315,6 +315,9 @@ export default function Register(): JSX.Element{
             </div>
           </div>
           
+        </div>
+        <div className="mt-4 text-left">
+          <p><strong>**</strong> La password deve avere almeno 10 caratteri, un numero, una lettera maiuscola una minuscola e almeno uno tra i seguenti caratteri speciali: (.:;?!@#,&gt;&lt;[]{}, inoltre non possono esserci più di due caratteri uguali ripetuti</p>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
