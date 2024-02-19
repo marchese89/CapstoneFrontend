@@ -11,17 +11,24 @@ import { loginAction, logoutAction } from "../redux/actions";
 
 const StyledHeader = styled.div`
 
+  header{
+    background-color: rgb(0, 150, 150);
+    background-image: linear-gradient(to bottom, rgba(0, 150, 200,1), rgba(255, 255, 255, 0));
+    color:white;
+  }
+  .mobile-menu{
+    background-color: aliceblue!important;
+  }
 `;
 
 
 
 export default function Header(): JSX.Element{
 
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    const router = useRouter()
-    const isLogged = useSelector((state:any) => state.login.isLogged)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const router = useRouter();
+    const isLogged = useSelector((state:any) => state.login.isLogged);
     const dispatch = useDispatch();
-
     function logout(){
         localStorage.removeItem("authToken");
         localStorage.removeItem("userType");
@@ -56,18 +63,19 @@ export default function Header(): JSX.Element{
         }
     },[])
 
-    const navigation = [
-        { name: 'Home', href: '#', click: ()=>{router.push("/")} },
-        { name: 'Product', href: '#' },
-        { name: 'Features', href: '#' },
-        { name: 'Marketplace', href: '#' },
-        { name: 'Company', href: '#' },
-      ]
+    // const navigation = [
+    //     { name: 'Home', href: '#', click: ()=>{router.push("/")} },
+    //     { name: 'Product', href: '#' },
+    //     { name: 'Features', href: '#' },
+    //     { name: 'Marketplace', href: '#' },
+    //     { name: 'Company', href: '#' },
+    //   ]
 
     return (
         <StyledHeader>
-        <header className="absolute inset-x-0 top-0 z-50">
-        <div><h1 onClick={()=>{router.push("/")}}>Supporto Studenti</h1></div>
+        <header className="">
+          {/* absolute inset-x-0 top-0 z-50 */}
+        <div className="text-center"><h1 onClick={()=>{router.push("/")}}>Supporto Studenti</h1></div>
         <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
@@ -122,9 +130,9 @@ export default function Header(): JSX.Element{
           </div>
      
         </nav>
-        <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
+        <Dialog as="div" className="lg:hidden mobile-menu" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
           <div className="fixed inset-0 z-50" />
-          <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-teal-50 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
@@ -191,7 +199,7 @@ export default function Header(): JSX.Element{
           </Dialog.Panel>
         </Dialog>
       </header>
-      <div
+      {/* <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
           aria-hidden="true"
         >
@@ -202,7 +210,7 @@ export default function Header(): JSX.Element{
                 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
             }}
           />
-        </div>
+        </div> */}
       </StyledHeader>
 
     )

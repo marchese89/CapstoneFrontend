@@ -12,6 +12,8 @@ type StudentParam= {
 }
 
 const StyledSingleRequestStudent = styled.div`
+  background-color: aliceblue;
+  padding-bottom: 3em;
 ul{ 
         width: 40%;
         list-style-type: none;
@@ -175,7 +177,9 @@ ul{
     },[])
 
     return (<StyledSingleRequestStudent>
+      <div className="text-center">
     <h2 className="text-center mt-4">{request?.title} | <strong>Materia:</strong> {request?.subject.name}</h2>
+    </div>
         <div>
         <div className="flex justify-center items-center">
             {(fileRequest && fileRequest && typeRequest) && (

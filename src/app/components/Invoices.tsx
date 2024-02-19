@@ -266,32 +266,23 @@ Totale Mensile: {totaPerMonth}&nbsp;&euro;
 
 <div className="subjects-mobile hidden">
   <div className="list-disc">
-    {invoicesList.map((request:Invoice,i:number) =>
+    {invoicesList.map((invoice:Invoice,i:number) =>
       
       (<div key={i} className="flex justify-between flex-col request">
         <div className="flex flex-col">
-        <strong>Titolo</strong>
-        {/* {request.title} */}
+        <strong>Numero Fattura</strong>
+        {invoice.number}
         </div>
         <div className="flex flex-col">
-        <strong>Materia</strong>
-        {/* {request.subject.name} */}
+        <strong>Data Fattura</strong>
+        {format(invoice.issuingDate,'dd/MM/yyyy')}
         </div>
         <div className="flex flex-col">
-        <strong>Studente</strong>
-        {/* {request.student.name}{' '}{request.student.surname} */}
+        <strong>Totale Fattura</strong>
+        <div className="flex justify-center">{invoice.total/100}&nbsp;<strong>&euro;</strong></div>
         </div>
-       
-        <div className="flex justify-center flex-col">
-        <strong>Data Richiesta</strong>
-        {/* {format(request.date,'dd/MM/yyyy HH:mm:ss')} */}
-          </div>
-        <div className="flex justify-center flex-col">
-        <strong>Stato Richiesta</strong>
-          {/* {request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'} */}
-          </div>
           <div className="flex justify-center">
-        <svg onClick={()=>{router.push(`/teacher_area/requests/${request.id}`)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 icon">
+        <svg onClick={()=>{router.push(`/teacher_area/invoices/${invoice.id}`)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 icon">
   <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
 </svg>
 

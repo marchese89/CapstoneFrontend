@@ -7,9 +7,6 @@ import styled from "styled-components";
 import {loginAction} from "../redux/actions"
 
 const StyledLogin = styled.div`
-    .outer-div{
-      margin-top: 10em;
-    }
     @keyframes shake {
   0% { transform: translateX(0); }
   20% { transform: translateX(-10px); }

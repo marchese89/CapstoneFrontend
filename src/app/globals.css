@@ -1,6 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+  font-family: "Kode Mono", monospace !important;
+  height: 100% !important;
+  margin: 0;
+  padding: 0;
+}
 
 .login-register a {
   margin-right: 0.5em;
@@ -9,6 +18,44 @@ h1 {
   text-align: center;
   font-size: xx-large;
   margin-top: 0.3em;
+  background-color: black;
+  display: inline-block;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 150, 200, 1),
+    rgba(255, 255, 255, 0)
+  );
+  padding: 0.1em;
+  border-radius: 10px;
+}
+input {
+  background-color: whitesmoke;
+}
+select {
+  background-color: whitesmoke;
+}
+h2 {
+  background-color: white;
+  color: white;
+  display: inline-block;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 150, 200, 1),
+    rgba(255, 255, 255, 0)
+  );
+  /* margin-top: 1em; */
+  border-radius: 5px;
+  padding: 0 0.2em;
+}
+
+a:hover {
+  background-color: white;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 150, 200, 1),
+    rgba(255, 255, 255, 0)
+  );
+  border-radius: 7px;
 }
 h1:hover {
   cursor: pointer;

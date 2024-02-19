@@ -1,11 +1,11 @@
 "use client"
 
 import styled from "styled-components";
-import { User, UserFromDB, UserToModify } from "../types";
+import { UserFromDB, UserToModify } from "../types";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 const StyledProfile = styled.div`
-         
+    background-color: aliceblue;
 `;
 
 export default function Profile():JSX.Element {
@@ -176,9 +176,11 @@ export default function Profile():JSX.Element {
 
     return <StyledProfile>
         <div>
-            <h2 className="text-center mt-4">Modifica dati profilo</h2>
+            <div className="text-center">
+            <h2 className="mt-4 mb-4">Modifica dati profilo</h2>
+            </div>
             {/* plus */}
-    <div className="flex flex-col items-center justify-center plus icon mt-2">
+    <div className="flex flex-col items-center justify-center plus icon">
     <button onClick={()=>{setModalPassword(true)}}
           className="rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2"
         >
@@ -201,7 +203,7 @@ export default function Profile():JSX.Element {
   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
 </svg></div>
                         {/* Titolo */}
-                        <div className="mb-4">
+                        <div className="mb-4 text-center">
                             <h2 className="text-lg font-semibold text-center">Modifica Password</h2>
                         </div>
                         {/* Campo di input */}
@@ -242,8 +244,8 @@ export default function Profile():JSX.Element {
             )}
 </div>
             <form onSubmit={handleSubmit} >
-        <div className="border-b border-gray-900/10 pb-12 tailwind-form max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="tailwind-form max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
               Nome
@@ -276,7 +278,7 @@ export default function Profile():JSX.Element {
 
           <div className="sm:col-span-6 lg:col-span-3">
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-              Email address
+              Email
             </label>
             <div className="mt-2">
               <input
@@ -395,10 +397,10 @@ export default function Profile():JSX.Element {
           
           
         </div>
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+        <div className="flex items-center justify-end gap-x-6 mt-8">
         <button
           type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className="mb-4 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           Modifica
         </button>

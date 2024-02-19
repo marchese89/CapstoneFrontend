@@ -12,6 +12,8 @@ const StyledInvoice = styled.div`
     margin-top: 1em;
     margin-left: auto;
     margin-right: auto;
+    background-color: aliceblue;
+    padding-bottom: 2em;
 `;
 
 const Invoice:React.FC<InvoiceParam> = ({invoiceId})=>{

@@ -2,10 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Request, Solution } from "../types";
+import styled from "styled-components";
 
 type RquestParam= {
     requestId: number
 }
+
+ const StyledSingleRequestTeacher = styled.div`
+     background-color: aliceblue;
+     padding-bottom: 3em;
+ `;
 
  const SingleRequestTeacher:React.FC<RquestParam> = ({requestId})=>{
 
@@ -33,7 +39,7 @@ type RquestParam= {
       if (isOpen && inputRef.current) {
           inputRef.current.focus();
       }
-  }, [isOpen]);
+    }, [isOpen]);
 
     function getFile(pathname:string,setFile:(url:string)=>void,setType:(type:string)=>void){
       
@@ -188,8 +194,10 @@ type RquestParam= {
       setIsOpenMessage(false);
     }
 
-    return (<>
+    return (<StyledSingleRequestTeacher>
+    <div className="text-center">
     <h2 className="text-center mt-4">{request?.title}</h2>
+    </div>
         <div>
         <div className="flex justify-center items-center">
             {fileContent && (
@@ -242,7 +250,7 @@ type RquestParam= {
                           </div>
         )}
         {(request && request.requestState === 'CLOSED') &&(
-          <div className="flex items-center justify-center"><h2 className="rounded p-2 mt-4 bg-red-500 inline-block text-white">Richiesta Chiusa</h2></div>
+          <div className="flex items-center justify-center"><h3 className="rounded p-2 mt-4 bg-red-500 inline-block text-white">Richiesta Chiusa</h3></div>
         )}
         
                     {/* Modal */}
@@ -335,7 +343,7 @@ type RquestParam= {
           </div>
         </div>
       )}
-    </>);
+    </StyledSingleRequestTeacher>);
 }
 
 export default SingleRequestTeacher;

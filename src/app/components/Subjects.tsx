@@ -4,8 +4,10 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 const StyledSubjects = styled.div`
+background-color: aliceblue;
+
     text-align: center;
-    margin-top: 1em;
+    
     .plus{
       &:hover{
         cursor: pointer;
@@ -222,7 +224,7 @@ export default function Subjects(): JSX.Element {
                         </button>
 </div>
 </div>
-<div className="subjects">
+<div className="subjects pb-8">
   <ul className="list-disc">
     {subjectList.map((subject:Subject,i:number) =>(
       <li key={i} className="flex justify-between">
