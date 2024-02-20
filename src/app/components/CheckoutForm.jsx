@@ -6,27 +6,14 @@ import {
 } from "@stripe/react-stripe-js";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-// import stripePromise from '../utils/stripe';
-import { FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
 import { removePaymentData } from "../redux/actions";
-
-const StyledPaymentForm = styled.div`
-  .card-element {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-`;
 
 export default function CheckoutForm({ clientSecret }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
-  const [message, setMessage] = React.useState(null);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const priceFromRedux = useSelector((state) => state.payment.price);
   const solutionIdFromRedux = useSelector((state) => state.payment.solutionId);
   const requestIdFromRedux = useSelector((state) => state.payment.requestId);
@@ -46,35 +33,11 @@ export default function CheckoutForm({ clientSecret }) {
       return;
     }
 
-    // const clientSecret = new URLSearchParams(window.location.search).get(
-    //   "payment_intent_client_secret"
-    // );
-    // console.log("client secret da checkout form: " + clientSecret);
-
     if (!clientSecretFromRedux) {
       return;
     } else {
       console.log("client secret: " + clientSecretFromRedux);
     }
-
-    // stripe
-    //   .retrievePaymentIntent(clientSecretFromRedux)
-    //   .then(({ paymentIntent }) => {
-    //     switch (paymentIntent.status) {
-    //       case "succeeded":
-    //         setMessage("Payment succeeded!");
-    //         break;
-    //       case "processing":
-    //         setMessage("Your payment is processing.");
-    //         break;
-    //       case "requires_payment_method":
-    //         setMessage("Your payment was not successful, please try again.");
-    //         break;
-    //       default:
-    //         setMessage("Something went wrong.");
-    //         break;
-    //     }
-    //   });
   }, [stripe]);
 
   useEffect(() => {
@@ -103,22 +66,10 @@ export default function CheckoutForm({ clientSecret }) {
     e.preventDefault();
 
     if (!stripe || !elements) {
-      // Stripe.js hasn't yet loaded.
-      // Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
 
     setIsLoading(true);
-
-    // const { error } = await stripe.confirmPayment({
-    //   elements,
-    //   confirmParams: {
-    //     // Make sure to change this to your payment completion page
-    //     return_url: "http://localhost:3000",
-    //   },
-    // });
-
-    // const cardElement = elements.getElement(PaymentElement);
 
     elements.submit();
     const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -161,7 +112,6 @@ export default function CheckoutForm({ clientSecret }) {
         setResponseHeader("Pagamento completato");
         setResponseMessage("Il suo pagamento è stato completato con successo");
         setIsOpen(true);
-        // router.push(`/student_area/requests/${requestIdFromRedux}`);
       })
       .catch((error) => {
         dispatch(removePaymentData());
@@ -170,20 +120,7 @@ export default function CheckoutForm({ clientSecret }) {
           "Ci sono stati problemi durante il pagamento, si prega di riprovare"
         );
         setIsOpen(true);
-        // console.log(error);
       });
-
-    // This point will only be reached if there is an immediate error when
-    // confirming the payment. Otherwise, your customer will be redirected to
-    // your `return_url`. For some payment methods like iDEAL, your customer will
-    // be redirected to an intermediate site first to authorize the payment, then
-    // redirected to the `return_url`.
-
-    // if (error.type === "card_error" || error.type === "validation_error") {
-    //   setMessage(error.message);
-    // } else {
-    //   setMessage("An unexpected error occurred.");
-    // }
 
     setIsLoading(false);
   };

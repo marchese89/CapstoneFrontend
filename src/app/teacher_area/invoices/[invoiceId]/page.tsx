@@ -1,8 +1,11 @@
-"use client"
+"use client";
 
-import Invoice from "@/app/components/Invoice"
+import Invoice from "@/app/components/Invoice";
 
-
-export default function SingleRequestPage({ params }: { params: { invoiceId: number } }){
-    return <Invoice invoiceId={params.invoiceId}/>
+export default function SingleRequestPage({
+  params,
+}: {
+  params: { invoiceId: number };
+}) {
+  return <Invoice invoiceId={params.invoiceId} />;
 }

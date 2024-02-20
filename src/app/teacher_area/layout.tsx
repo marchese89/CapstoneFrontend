@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import TeacherArea from "../components/TeacherArea"
+import TeacherArea from "../components/TeacherArea";
 
 export default function DashboardLayout({
-    children, 
-  }: {
-    children: React.ReactNode
-  }) {
-    return (
-        <>
-        <TeacherArea/>
-        {children}
-        </>
-    )
-  }
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <TeacherArea />
+      {children}
+    </>
+  );
+}

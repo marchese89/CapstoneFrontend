@@ -75,10 +75,6 @@ export type FeedBackResponse = {
     score:number
 }
 
-// export type NumericalObject = {
-//     [key: string]: number;
-//   };
-
 export type User = {
     name:string,
     surname:string,
