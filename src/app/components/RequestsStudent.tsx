@@ -78,12 +78,30 @@ const StyledRequestsStudent = styled.div`
   }
   .request{
           min-width: 300px;
-          background-color: aliceblue;
+          background-color: darkcyan;
           margin: 0.4em;
           padding: 0.5em;
           border-radius: 5px;
-          
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+          background-image: linear-gradient(
+    to bottom,
+    rgba(0, 150, 200, 1),
+    rgba(255, 255, 255, 0)
+  );
         }
+        .req-open{
+    background-color: lightgreen;
+  }
+  .req-closed{
+    background: lightcoral;
+    
+  }
+  .req-open,.req-closed{
+    color: white;
+    padding: 0.2em;
+    border-radius: 5px;
+  }
+
 `;
 
 
@@ -260,7 +278,13 @@ export default function RequestsStudent(): JSX.Element {
     setIsOpenMessage(false);
   }
 
-
+  function limitText(text:string):string{
+    if(text.length <= 20){
+      return text;
+    }else{
+      return text.substring(0,20)+"...";
+    }
+  }
 
   return <StyledRequestsStudent>
     {/* plus */}
@@ -304,10 +328,10 @@ export default function RequestsStudent(): JSX.Element {
       (((request.requestState === 'OPEN' && openedRequests))||((request.requestState === 'CLOSED' && closedRequests))) &&
       (
         <tr key={i} >
-        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.title}</td>
-        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.subject.name}</td>
+        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{limitText(request.title)}</td>
+        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{limitText(request.subject.name)}</td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{` ${format(request.date,'dd/MM/yyyy HH:mm:ss')}`}</td>
-        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}</td>
+        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap"><span className={`${request.requestState === 'OPEN' ? 'req-open':'req-closed'}`}>{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}</span></td>
         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-center whitespace-nowrap">
         <div className="flex justify-center">
         <svg 
@@ -339,19 +363,19 @@ export default function RequestsStudent(): JSX.Element {
       (<div key={i} className="flex justify-between flex-col request">
         <div className="flex flex-col">
         <strong>Titolo</strong>
-        {request.title}
+        {limitText(request.title)}
         </div>
         <div className="flex flex-col">
         <strong>Materia</strong>
-        {request.subject.name}
+        {limitText(request.subject.name)}
         </div>
         <div className="flex justify-center flex-col">
         <strong>Data Richiesta</strong>
         {format(request.date,'dd/MM/yyyy HH:mm:ss')}
           </div>
-        <div className="flex justify-center flex-col">
+        <div className="flex justify-center flex-col items-center">
         <strong>Stato Richiesta</strong>
-          {request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}
+        <span className={`${request.requestState === 'OPEN' ? 'req-open':'req-closed'}`}>{request.requestState === 'OPEN' ? 'APERTA':'CHIUSA'}</span>
           </div>
           <div className="flex justify-center">
         <svg onClick={()=>{router.push(`/teacher_area/requests/${request.id}`)}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 icon">

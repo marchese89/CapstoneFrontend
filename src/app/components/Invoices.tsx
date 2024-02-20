@@ -76,11 +76,16 @@ const StyledInvoices = styled.div`
   }
   .request{
           min-width: 300px;
-          background-color: aliceblue;
+          background-color: darkcyan;
           margin: 0.4em;
           padding: 0.5em;
           border-radius: 5px;
-          
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+          background-image: linear-gradient(
+    to bottom,
+    rgba(0, 150, 200, 1),
+    rgba(255, 255, 255, 0)
+  );
         }
 `;
 
