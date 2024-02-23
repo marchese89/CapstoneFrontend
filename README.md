@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Student Support
 
-## Getting Started
 
-First, run the development server:
+## 💻 Full Stack Capstone Project
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This web application connect teachers and students for support requests
+<div style="text-align:justify">
+Both students and teacher can register
+Teacher can add subject and students can send request selecting a subject
+All teachers with selected subject can reply to the request with a solution
+At this point student can select a solution and pay it with stripe
+Students can send a feedback to teacher for each solution purchased
+The application was developed using Nextjs (React) for the front end, Spring Boot for the back end and PostgreSQL for data storage
+</div>
+<br>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📋 Functionality
+* User Registration and login with JWT token
+* automatic sending emails
+* upload files into server
+* automatic generation pdf file (invoices) and sending via email
+* payments with Stripe
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📦 Installed Packages
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This project was generated with npx create-next-app@latest version 14.1.0
 
-## Learn More
+* npm install babel-plugin-styled-components
+* npm install styled-components
+* npm install react-redux
+* npm install @stripe/stripe-js
+* npm install @stripe/react-stripe-js
+* npm install @reduxjs/toolkit
+* npm install @heroicons/react
+* npm install @headlessui/react
+* npm install date-fns
 
-To learn more about Next.js, take a look at the following resources:
+Run `npm run dev` for dev server. Navigate to `http://localhost:3000/`. The application will automatically reload if you change any of the source files.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎬 View the full video project 
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+https://youtu.be/ykcXZhvgnJc
 
-## Deploy on Vercel
+## Backend Link
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+https://github.com/marchese89/CapstoneBackend
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 🖊️ Author
+Antonio Giovanni Marchese

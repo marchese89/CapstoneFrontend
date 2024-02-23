@@ -14,16 +14,36 @@ type StudentParam = {
 const StyledSingleRequestStudent = styled.div`
   background-color: aliceblue;
   padding-bottom: 3em;
+  @media screen and (max-width: 768px) {
+    ul {
+      width: 95%;
+      li {
+        margin: 0.5em;
+        padding: 0.5em;
+      }
+    }
+    font-size: 7pt !important;
+  }
   ul {
-    width: 40%;
+    min-width: 350px;
     list-style-type: none;
     li {
       min-width: 300px;
-      background-color: aliceblue;
-      margin: 0.4em;
-      padding: 0.5em;
+      background-color: darkcyan;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      margin: 1em;
+      padding: 1em;
       border-radius: 5px;
     }
+  }
+  .price {
+    text-wrap: nowrap;
+  }
+  .feedback {
+    text-wrap: nowrap;
+  }
+  .teacher-name {
+    text-wrap: nowrap;
   }
   .stars a {
     opacity: 20%;
@@ -214,57 +234,68 @@ const SingleRequestStudent: React.FC<StudentParam> = ({ requestId }) => {
             solutionList.map((solution: Solution, i: number) => (
               <li key={i} className="flex justify-between">
                 <div className="flex feed">
-                  {solution.teacher.name}&nbsp;{solution.teacher.surname}
-                  {" | feedback: "}
-                  <a
-                    style={
-                      solution.teacher.feedback && solution.teacher.feedback > 0
-                        ? { opacity: "100%" }
-                        : {}
-                    }
-                  >
-                    ⭐
-                  </a>
-                  <a
-                    style={
-                      solution.teacher.feedback && solution.teacher.feedback > 1
-                        ? { opacity: "100%" }
-                        : {}
-                    }
-                  >
-                    ⭐
-                  </a>
-                  <a
-                    style={
-                      solution.teacher.feedback && solution.teacher.feedback > 2
-                        ? { opacity: "100%" }
-                        : {}
-                    }
-                  >
-                    ⭐
-                  </a>
-                  <a
-                    style={
-                      solution.teacher.feedback && solution.teacher.feedback > 3
-                        ? { opacity: "100%" }
-                        : {}
-                    }
-                  >
-                    ⭐
-                  </a>
-                  <a
-                    style={
-                      solution.teacher.feedback && solution.teacher.feedback > 4
-                        ? { opacity: "100%" }
-                        : {}
-                    }
-                  >
-                    ⭐
-                  </a>
+                  <div className="teacher-name flex content-center items-center">
+                    {solution.teacher.name}&nbsp;{solution.teacher.surname}
+                  </div>
+                  <div className="flex feedback content-center items-center ml-2">
+                    <p>
+                      <strong>feedback:</strong>
+                    </p>
+                    <a
+                      style={
+                        solution.teacher.feedback &&
+                        solution.teacher.feedback > 0
+                          ? { opacity: "100%" }
+                          : {}
+                      }
+                    >
+                      ⭐
+                    </a>
+                    <a
+                      style={
+                        solution.teacher.feedback &&
+                        solution.teacher.feedback > 1
+                          ? { opacity: "100%" }
+                          : {}
+                      }
+                    >
+                      ⭐
+                    </a>
+                    <a
+                      style={
+                        solution.teacher.feedback &&
+                        solution.teacher.feedback > 2
+                          ? { opacity: "100%" }
+                          : {}
+                      }
+                    >
+                      ⭐
+                    </a>
+                    <a
+                      style={
+                        solution.teacher.feedback &&
+                        solution.teacher.feedback > 3
+                          ? { opacity: "100%" }
+                          : {}
+                      }
+                    >
+                      ⭐
+                    </a>
+                    <a
+                      style={
+                        solution.teacher.feedback &&
+                        solution.teacher.feedback > 4
+                          ? { opacity: "100%" }
+                          : {}
+                      }
+                    >
+                      ⭐
+                    </a>
+                  </div>
                 </div>
-                <div className="flex">
-                  Prezzo: {solution.price / 100}
-                  &euro;&nbsp;&nbsp;paga&nbsp;&nbsp;
+                <div className="flex price content-center items-center">
+                  <strong>Prezzo:</strong> {solution.price / 100}
+                  <strong>&euro;</strong>&nbsp;&nbsp;paga&nbsp;&nbsp;
                   <svg
                     onClick={() => {
                       dispatch(

@@ -302,7 +302,7 @@ export default function Login(): JSX.Element {
           <div className="absolute bg-white p-6 rounded-lg shadow-xl">
             <div>
               {/* Title */}
-              <div className="mb-4">
+              <div className="mb-4 text-center">
                 <h2 className="text-lg font-semibold text-center">
                   {modalTitle}
                 </h2>

@@ -150,8 +150,6 @@ export default function CheckoutForm({ clientSecret }) {
             </span>
           </button>
         </div>
-        {/* Show any error or success messages */}
-        {message && <div id="payment-message">{message}</div>}
       </form>
       {/* Modal */}
       {isOpen && (
@@ -197,7 +195,7 @@ export default function CheckoutForm({ clientSecret }) {
           <div className="absolute bg-white p-6 rounded-lg shadow-xl">
             <div>
               {/* Titolo */}
-              <div className="mb-4">
+              <div className="mb-4 text-center">
                 <h2 className="text-lg font-semibold text-center">
                   Pagamento in corso
                 </h2>
