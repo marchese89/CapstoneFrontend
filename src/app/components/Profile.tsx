@@ -179,7 +179,7 @@ export default function Profile(): JSX.Element {
             onClick={() => {
               setModalPassword(true);
             }}
-            className="rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2"
+            className="mb-4 rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2"
           >
             Modifica Password
           </button>

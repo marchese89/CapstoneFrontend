@@ -14,7 +14,10 @@ const StyledRegister = styled.div`
 export default function Register(): JSX.Element {
   const router = useRouter();
   const dispatch = useDispatch();
-
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [responseHeader, setResponseHeader] = useState<string>("");
+  const [responseMessage, setResponseMessage] = useState<string>("");
+  const [registerOk, setRegisterOk] = useState<boolean>(false);
   const [user, setUser] = useState<User>({
     name: "",
     surname: "",
@@ -91,7 +94,7 @@ export default function Register(): JSX.Element {
       });
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function register(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`, {
@@ -103,18 +106,35 @@ export default function Register(): JSX.Element {
     })
       .then((response: Response) => {
         if (!(response.status === 201)) {
+          setIsOpen(true);
+          setResponseHeader("Problemi durante la registrazione");
+          setResponseMessage(
+            "Riprova ad effettuare la registrazione con dati diversi"
+          );
           throw new Error("Network response was not ok");
         }
-        login();
+        setIsOpen(true);
+        setRegisterOk(true);
+        setResponseHeader("Registrazione Effettuata con Sucesso");
+        setResponseMessage(
+          "Da ora in poi puoi fare il login con le tue credenziali"
+        );
       })
       .catch((error: Error) => {
         console.log(error);
       });
   }
 
+  function handleClose() {
+    setIsOpen(false);
+    if (registerOk) {
+      login();
+    }
+  }
+
   return (
     <StyledRegister>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={register}>
         <div className="border-b border-gray-900/10 pb-12 tailwind-form max-w-screen-lg mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64 text-center">
           <h2 className="text-center font-semibold leading-7 text-gray-900 mt-4 mb-2">
             Registrazione
@@ -168,7 +188,7 @@ export default function Register(): JSX.Element {
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Email address<strong>*</strong>
+                Email<strong>*</strong>
               </label>
               <div className="mt-2">
                 <input
@@ -387,6 +407,44 @@ export default function Register(): JSX.Element {
           </div>
         </div>
       </form>
+      {/* Modal */}
+      {isOpen && (
+        <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
+          <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+            <div className="flex justify-end">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 icon"
+                onClick={handleClose}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+            {/* Titolo */}
+            <div className="mb-4 text-center">
+              <h2 className="text-lg font-semibold">{responseHeader}</h2>
+            </div>
+            <div>{responseMessage}</div>
+            <div className="text-center">
+              {/* Bottone di submit */}
+              <button
+                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={handleClose}
+              >
+                Chiudi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </StyledRegister>
   );
 }

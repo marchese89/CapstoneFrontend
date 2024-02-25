@@ -106,3 +106,7 @@ h1:hover {
     height: 700px;
   }
 }
+
+label {
+  text-align: left;
+}

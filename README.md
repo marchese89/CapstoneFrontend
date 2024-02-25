@@ -37,9 +37,6 @@ This project was generated with npx create-next-app@latest version 14.1.0
 
 Run `npm run dev` for dev server. Navigate to `http://localhost:3000/`. The application will automatically reload if you change any of the source files.
 
-## 🎬 View the full video project 
-
-https://youtu.be/ykcXZhvgnJc
 
 ## Backend Link
 
