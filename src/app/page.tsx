@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { loginAction } from "./redux/actions";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
+import img from "next/image";
 
 const StyledHome = styled.div`
   p {
@@ -19,7 +20,7 @@ const StyledHome = styled.div`
   background-color: aliceblue;
 
   .rectangle {
-    width: 25%;
+    width: 300px;
     min-height: 200px;
     display: flex;
     justify-content: center;
@@ -57,6 +58,39 @@ export default function Home() {
     if (localStorage.getItem("userType")) {
       dispatch(loginAction(localStorage.getItem("userType")));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    function handleScroll() {
+      const desiredYPosition1 = 300;
+      const desiredYPosition2 = 500;
+      const desiredYPosition3 = 800;
+      const scrollY = window.scrollY;
+      if (scrollY >= desiredYPosition1) {
+        const element = document.querySelector(".first-animated");
+
+        if (element && !element.classList.contains("animazione-slide")) {
+          element.classList.add("animazione-slide");
+        }
+      }
+      if (scrollY >= desiredYPosition2) {
+        const element = document.querySelector(".second-animated");
+
+        if (element && !element.classList.contains("animazione-slide")) {
+          element.classList.add("animazione-slide");
+        }
+      }
+      if (scrollY >= desiredYPosition3) {
+        const element = document.querySelector(".third-animated");
+
+        if (element && !element.classList.contains("animazione-slide")) {
+          element.classList.add("animazione-slide");
+        }
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -76,7 +110,7 @@ export default function Home() {
               onClick={() => {
                 router.push("/register");
               }}
-              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border-2 border-gray-500 rounded-lg hover:bg-gray-300 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
             >
               Registrati
             </a>
@@ -91,7 +125,7 @@ export default function Home() {
       </section>
       <div className="xl:mx-64 lg:mx-32 sm:mx-1">
         <div className="text-center text-lg mx-4 hidden lg:block">
-          <div className="flex justify-evenly">
+          <div className="flex justify-evenly first-animated">
             <div className="rectangle">
               <div className="flex flex-col items-center justify-between">
                 Scegli la materia di tuo interesse
@@ -118,7 +152,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex justify-evenly">
+          <div className="flex justify-evenly second-animated">
             <div className="rectangle">
               Aspetta le soluzioni degli insegnanti
             </div>
@@ -128,7 +162,7 @@ export default function Home() {
               dell&apos;insegnante
             </div>
           </div>
-          <div className="flex justify-evenly">
+          <div className="flex justify-evenly third-animated">
             <div className="rectangle">
               <div className="flex items-center flex-col">
                 Paga in modo sicuro attraverso Sripe

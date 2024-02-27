@@ -139,7 +139,6 @@ export default function RequestsTeacher(): JSX.Element {
         }
         setPages(array);
         setRequeststList(requestsPage.content);
-        console.log(requestsPage.content);
       })
       .catch((error: Error) => {
         console.log(error);

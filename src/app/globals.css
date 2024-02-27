@@ -18,13 +18,8 @@ h1 {
   text-align: center;
   font-size: xx-large;
   margin-top: 0.3em;
-  background-color: black;
+  /* background-color: black; */
   display: inline-block;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(0, 150, 200, 1),
-    rgba(255, 255, 255, 0)
-  );
   padding: 0.1em;
   border-radius: 10px;
 }
@@ -35,27 +30,12 @@ select {
   background-color: whitesmoke;
 }
 h2 {
-  background-color: white;
-  color: white;
+  /* background-color: white; */
   display: inline-block;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(0, 150, 200, 1),
-    rgba(255, 255, 255, 0)
-  );
   border-radius: 5px;
   padding: 0 0.2em;
 }
 
-a:hover {
-  background-color: white;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(0, 150, 200, 1),
-    rgba(255, 255, 255, 0)
-  );
-  border-radius: 7px;
-}
 h1:hover {
   cursor: pointer;
 }
@@ -109,4 +89,36 @@ h1:hover {
 
 label {
   text-align: left;
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    left: -120%;
+  }
+  100% {
+    left: 0;
+  }
+}
+
+.first-animated {
+  position: relative;
+  left: -150%;
+}
+
+.second-animated {
+  position: relative;
+  left: -150%;
+}
+
+.third-animated {
+  position: relative;
+  left: -150%;
+}
+
+.animazione-slide {
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-name: slideInFromLeft;
+  position: relative;
+  left: 0;
 }

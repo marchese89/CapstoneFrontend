@@ -61,6 +61,7 @@ export default function Header(): JSX.Element {
     if (localStorage.getItem("userType") !== null) {
       dispatch(loginAction(localStorage.getItem("userType")));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

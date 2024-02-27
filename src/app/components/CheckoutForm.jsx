@@ -35,8 +35,6 @@ export default function CheckoutForm({ clientSecret }) {
 
     if (!clientSecretFromRedux) {
       return;
-    } else {
-      console.log("client secret: " + clientSecretFromRedux);
     }
   }, [stripe]);
 
@@ -107,7 +105,6 @@ export default function CheckoutForm({ clientSecret }) {
         if (res.status === 401) {
           throw new Error("Problems with payment");
         }
-        console.log("pagamento ok");
         dispatch(removePaymentData());
         setResponseHeader("Pagamento completato");
         setResponseMessage("Il suo pagamento è stato completato con successo");

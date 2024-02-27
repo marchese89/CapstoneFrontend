@@ -28,6 +28,7 @@ const StyledSingleRequestStudent = styled.div`
     min-width: 350px;
     list-style-type: none;
     li {
+      color: white;
       min-width: 300px;
       background-color: darkcyan;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -124,15 +125,12 @@ const SingleRequestStudent: React.FC<StudentParam> = ({ requestId }) => {
     )
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          console.log("risposta NON OK da get solution");
           throw new Error("Network response was not ok");
         }
-        console.log("risposta ok da get solution list");
         return response.json();
       })
       .then((sol: Solution[]) => {
         setSolutionList(sol);
-        console.log(sol);
       })
       .catch((error: Error) => {
         console.log(error);
@@ -165,7 +163,6 @@ const SingleRequestStudent: React.FC<StudentParam> = ({ requestId }) => {
           getFile(req.solutionUrl, setFileSolution, setTypeSolution);
           getFile(req.invoice.invoiceFileUrl, setFileInvoice, setTypeInvoice);
         }
-        console.log(req);
       })
       .catch((error: Error) => {
         console.log(error);

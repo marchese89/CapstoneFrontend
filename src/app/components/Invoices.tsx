@@ -114,8 +114,6 @@ export default function Invoices(): JSX.Element {
       .then((years) => {
         setYearsList(years);
         setYearSelected(years[0]);
-        console.log("years: ");
-        console.log(years);
       })
       .catch((error: Error) => {
         console.log(error);
@@ -151,8 +149,6 @@ export default function Invoices(): JSX.Element {
         }
         setPages(array);
         setInvoicestList(invoicesPage.content);
-
-        console.log(invoicesPage.content);
       })
       .catch((error: Error) => {
         console.log(error);
@@ -385,7 +381,6 @@ export default function Invoices(): JSX.Element {
             value={selectedPage}
             onChange={(e) => {
               setSelectedPage(e.target.value);
-              console.log("cambio selected page...");
             }}
           />
           <button

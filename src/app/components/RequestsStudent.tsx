@@ -201,7 +201,6 @@ export default function RequestsStudent(): JSX.Element {
         }
         setPages(array);
         setRequeststList(requestsPage.content);
-        console.log(requestsPage);
       })
       .catch((error: Error) => {
         console.log(error);
@@ -224,7 +223,6 @@ export default function RequestsStudent(): JSX.Element {
       })
       .then((subjects: Subject[]) => {
         setSubjectList(subjects);
-        console.log(subjects);
       })
       .catch((error: Error) => {
         console.log(error);

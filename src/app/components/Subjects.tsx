@@ -121,7 +121,6 @@ export default function Subjects(): JSX.Element {
       })
       .then((subjects: Subject[]) => {
         setSubjectList(subjects);
-        console.log(subjects);
       })
       .catch((error: Error) => {
         console.log(error);

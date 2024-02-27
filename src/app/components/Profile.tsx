@@ -116,7 +116,6 @@ export default function Profile(): JSX.Element {
             piva: data.piva,
           });
         }
-        console.log(data);
       })
       .catch((error: Error) => {
         console.log(error);

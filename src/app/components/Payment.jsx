@@ -8,7 +8,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
 const StyledPayment = styled.div`
-  margin-top: 12em;
   width: 25em;
   margin-left: auto;
   margin-right: auto;
@@ -40,7 +39,6 @@ export default function App() {
       .then((data) => {
         setClientSecret(data.clientSecret);
         dispatch(addClientSecret(data.clientSecret));
-        console.log("clientSecret: " + data.clientSecret);
       });
   }, []);
 
@@ -52,6 +50,9 @@ export default function App() {
   return (
     <StyledPayment>
       <div className="App">
+        <div className="text-center mb-8 mt-8">
+          <h2>Pagamento</h2>
+        </div>
         {clientSecret && (
           <Elements options={options} stripe={stripePromise}>
             <CheckoutForm clientSecret={clientSecret} />

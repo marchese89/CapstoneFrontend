@@ -114,10 +114,8 @@ const SingleRequestTeacher: React.FC<RquestParam> = ({ requestId }) => {
     )
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          console.log("risposta NON OK da get solution");
           throw new Error("Network response was not ok");
         }
-        console.log("risposta ok da get solution");
         return response.json();
       })
       .then((sol: Solution) => {
@@ -129,8 +127,6 @@ const SingleRequestTeacher: React.FC<RquestParam> = ({ requestId }) => {
             setFileInvoice,
             setTypeInvoice
           );
-        } else {
-          console.log("request: " + request);
         }
       })
       .catch((error: Error) => {
