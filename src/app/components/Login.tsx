@@ -30,9 +30,10 @@ const StyledLogin = styled.div`
 
   .shake-element {
     animation: shake 0.5s ease-in-out;
-    input {
-      background-color: salmon;
-    }
+  }
+
+  .invalid input[type="password"] {
+    background-color: salmon;
   }
 `;
 type UserLoginDTO = {
@@ -56,7 +57,7 @@ export default function Login(): JSX.Element {
   const [modalTitle, setModalTitle] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
   const [isShaked, setIsShaked] = useState<boolean>(false);
-
+  const [invalid, setInvalid] = useState<boolean>(false);
   function handlePasswordRecover() {
     seModalPasswordRecover(false);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/recoverPass`, {
@@ -123,6 +124,7 @@ export default function Login(): JSX.Element {
   });
 
   function handleInputChangeUser(e: ChangeEvent<HTMLInputElement>) {
+    if (invalid && e.target.name === `password`) setInvalid(false);
     setUser({
       ...user,
       [e.target.name]: e.target.value,
@@ -132,7 +134,7 @@ export default function Login(): JSX.Element {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setUser({
-      email: "",
+      ...user,
       password: "",
     });
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
@@ -145,27 +147,21 @@ export default function Login(): JSX.Element {
       .then((response: Response) => {
         if (!(response.status === 200)) {
           if (response.status === 400 || response.status === 401) {
-            setIsShaked(true);
             setModalTitle("Login Fallito");
             setModalMessage(
               "Le credenziali che hai inserito non sono corrette"
             );
             setIsOpen(true);
+            setIsShaked(true);
+            setInvalid(true);
             setTimeout(() => {
               setIsOpen(false);
               setIsShaked(false);
             }, 2000);
           } else {
-            if (response.status === 500) {
-              localStorage.removeItem("authToken");
-              localStorage.removeItem("userType");
-              router.push("/");
-            } else {
-              throw new Error("Network response was not ok");
-            }
+            throw new Error("Network response was not ok");
           }
         }
-        setIsShaked(false);
         return response.json();
       })
       .then((loginResponse: TokenDTO) => {
@@ -188,8 +184,8 @@ export default function Login(): JSX.Element {
   return (
     <StyledLogin>
       <div
-        className={`mt-10 sm:mx-auto sm:w-full sm:max-w-sm outer-div mx-8 shake ${
-          isShaked ? ` shake-element` : ``
+        className={`mt-10 sm:mx-auto sm:w-full sm:max-w-sm outer-div mx-8 ${
+          invalid ? ` invalid` : ``
         }`}
       >
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -311,8 +307,16 @@ export default function Login(): JSX.Element {
         </div>
       )}
       {isOpen && (
-        <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
-          <div className="absolute bg-white p-6 rounded-lg shadow-xl">
+        <div
+          className={`fixed z-50 inset-0 overflow-y-auto flex items-center justify-center shake ${
+            isShaked ? ` shake-element` : ``
+          }`}
+        >
+          <div
+            className={`absolute ${
+              isShaked ? `bg-red-400 text-white ` : `bg-white text-gray-900`
+            } p-6 rounded-lg shadow-xl`}
+          >
             <div>
               {/* Title */}
               <div className="mb-4 text-center">
@@ -322,7 +326,7 @@ export default function Login(): JSX.Element {
               </div>
 
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label className="block mb-2 text-sm font-medium">
                   {modalMessage}
                 </label>
               </div>
