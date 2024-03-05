@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
@@ -44,7 +45,7 @@ export default function Subjects(): JSX.Element {
   const [subjectList, setSubjectList] = useState<Subject[]>([]);
   const [subjectNoList, setSubjectNoList] = useState<Subject[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const router = useRouter();
   function addSubject() {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/subjects`, {
       method: "POST",
@@ -75,7 +76,13 @@ export default function Subjects(): JSX.Element {
     })
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         getSubjects();
         getNoSubjects();
@@ -96,7 +103,13 @@ export default function Subjects(): JSX.Element {
     })
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         getSubjects();
       })
@@ -115,7 +128,13 @@ export default function Subjects(): JSX.Element {
     })
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         return response.json();
       })
@@ -137,7 +156,13 @@ export default function Subjects(): JSX.Element {
     })
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         return response.json();
       })

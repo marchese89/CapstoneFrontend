@@ -74,7 +74,13 @@ export default function Login(): JSX.Element {
           if (response.status === 404) {
             throw new Error("notFound");
           } else {
-            throw new Error("Network response was not ok");
+            if (response.status === 500) {
+              localStorage.removeItem("authToken");
+              localStorage.removeItem("userType");
+              router.push("/");
+            } else {
+              throw new Error("Network response was not ok");
+            }
           }
         }
         setEmail("");
@@ -149,8 +155,15 @@ export default function Login(): JSX.Element {
               setIsOpen(false);
               setIsShaked(false);
             }, 2000);
+          } else {
+            if (response.status === 500) {
+              localStorage.removeItem("authToken");
+              localStorage.removeItem("userType");
+              router.push("/");
+            } else {
+              throw new Error("Network response was not ok");
+            }
           }
-          throw new Error("Network response was not ok");
         }
         setIsShaked(false);
         return response.json();

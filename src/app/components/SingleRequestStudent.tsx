@@ -125,7 +125,13 @@ const SingleRequestStudent: React.FC<StudentParam> = ({ requestId }) => {
     )
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         return response.json();
       })
@@ -150,7 +156,13 @@ const SingleRequestStudent: React.FC<StudentParam> = ({ requestId }) => {
     )
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         return response.json();
       })

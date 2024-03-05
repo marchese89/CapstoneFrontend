@@ -3,6 +3,7 @@
 import styled from "styled-components";
 import { UserFromDB, UserToModify } from "../types";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const StyledProfile = styled.div`
   background-color: aliceblue;
@@ -15,7 +16,7 @@ export default function Profile(): JSX.Element {
   const [modalPassword, setModalPassword] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
-
+  const router = useRouter();
   const [user, setUser] = useState<UserToModify>({
     name: "",
     surname: "",
@@ -51,7 +52,13 @@ export default function Profile(): JSX.Element {
     })
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         setModalTitle("Dati Modificati");
         setModalMessage("I tuoi dati sono stati modificati correttamente");

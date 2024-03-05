@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Request, Solution } from "../types";
 import styled from "styled-components";
+import { useRouter } from "next/navigation";
 
 type RquestParam = {
   requestId: number;
@@ -29,7 +30,7 @@ const SingleRequestTeacher: React.FC<RquestParam> = ({ requestId }) => {
   const [isOpenMessage, setIsOpenMessage] = useState<boolean>(false);
   const [responseHeader, setResponseHeader] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
-
+  const router = useRouter();
   useEffect(() => {
     getSolution();
   }, [request]);
@@ -85,7 +86,13 @@ const SingleRequestTeacher: React.FC<RquestParam> = ({ requestId }) => {
     )
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         return response.json();
       })
@@ -114,7 +121,13 @@ const SingleRequestTeacher: React.FC<RquestParam> = ({ requestId }) => {
     )
       .then((response: Response) => {
         if (!(response.status === 200)) {
-          throw new Error("Network response was not ok");
+          if (response.status === 500) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("userType");
+            router.push("/");
+          } else {
+            throw new Error("Network response was not ok");
+          }
         }
         return response.json();
       })
